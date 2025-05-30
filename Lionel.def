@@ -1,0 +1,105 @@
+BootStrap: docker
+From: rocker/geospatial:latest
+
+%post
+    # Set noninteractive mode.
+    export DEBIAN_FRONTEND=noninteractive
+
+    # Update package list
+    apt-get update
+
+    # Install locales and generate the necessary locale
+    apt-get install -y locales
+    locale-gen en_US.UTF-8
+
+    apt-get update && apt-get install -y \
+        software-properties-common \
+        bash \
+        coreutils \
+        curl \
+        gnupg \
+        ca-certificates \
+        cmake \
+        libcurl4-openssl-dev \
+        libxml2-dev \
+        libssl-dev \
+        libgdal-dev \
+        libproj-dev \
+        libgeos-dev \
+        libv8-dev \
+        libsodium-dev \
+        libgit2-dev \
+        libprotobuf-dev \
+        protobuf-compiler \
+        pkg-config \
+        unzip \
+        wget \
+        git \
+        libicu-dev \
+        libblas-dev \
+        liblapack-dev \
+        gfortran \
+        libreadline-dev \
+        tzdata \
+        libx11-dev \
+        libxt-dev \
+        libxmu-dev \
+        libbz2-dev \
+        libnng-dev \
+        libfontconfig1-dev \
+        libfreetype6-dev \
+        libharfbuzz-dev \
+        libfribidi-dev \
+        slurm-client \
+        lmod \
+        libboost-dev \
+        libboost-system-dev \
+        libboost-filesystem-dev \
+        libboost-chrono-dev \
+        build-essential \
+        gcc \
+        g++ \
+        libomp-dev \
+        && rm -rf /var/lib/apt/lists/*
+
+
+    # Set locale for the environment
+    echo "LANG=en_US.UTF-8" >> /etc/default/locale
+    echo "LC_ALL=en_US.UTF-8" >> /etc/default/locale
+    export LANG=en_US.UTF-8
+    export LC_ALL=en_US.UTF-8
+
+
+    # Create directories
+    mkdir /inst
+    mkdir /input
+    mkdir /opt/_targets
+
+    # Install R packages
+    Rscript -e "devtools::install_github('njtierney/geotargets')"
+    Rscript -e "install.packages(c('pak','tarchetypes','testthat','nhdplusTools','RhpcBLASctl', 'psych'))"
+    Rscript -e "pak::pak('wlandau/crew'); pak::pak('wlandau/crew.cluster')"
+    Rscript -e "pak::pkg_install(c('ropensci/chopin'))"  
+    Rscript -e "devtools::install_github('NIEHS/PrestoGP')"
+    Rscript -e "pak::pak('NIEHS/amadeus')"
+    Rscript -e "pak::pak('ropensci/targets')"
+    Rscript -e "pak::pak('r-gregmisc/gtools')"
+    Rscript -e "pak::pkg_install(c('qs','qs2','rsample','stats','parsnip','fastDummies','scales'))"
+    Rscript -e "pak::pkg_install(c('exactextractr','dataRetrieval','gt'))"
+    Rscript -e "pak::pkg_install(c('ggridges','skimr','webshot2'))"
+    Rscript -e "pak::pkg_install(c('spatialsample','yardstick'))"
+    Rscript -e "pak::pkg_install(c('parallelly','future.mirai'))"
+
+%environment
+    # Set locale for the container environment
+    export LANG=en_US.UTF-8
+    export LC_ALL=en_US.UTF-8
+    export TERM=xterm-256color
+
+
+
+%runscript
+    echo "Container is ready. Run your program as needed."
+
+%labels
+    basic geospatial with targets, crew, and OpenMP support
