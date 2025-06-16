@@ -1,4 +1,6 @@
 name|type|data|command|depend|seed|path|time|size|bytes|format|repository|iteration|parent|children|seconds|warnings|error
-clean_nutrients|stem|cb5d1e3dd4741b24|b9676be692878873|e0fb8ca8d76a6724|471175728||t20255.6417628863s|0303cfe76f9a50ae|127101|fst_dt|local|vector|||0.187||
+clean_nutrients|stem|cb5d1e3dd4741b24|b9676be692878873|e0fb8ca8d76a6724|471175728||t20255.7770762973s|0303cfe76f9a50ae|127101|fst_dt|local|vector|||0.213||
 get_clean_nutrients|function|46af12be67a489ba|||||||||||||||
 nutrients|stem|326075bf408a12bc|1a2578c863f74e47|2c530c1562a7fbd1|-2061864178|inst/nutrients.csv|t20255.528557246s|7a3470406da4ced2|217079|file|local|vector|||0.289||
+plot_al_coords|function|04ed8d96b7ec5cae|||||||||||||||
+station_coords|stem|368af795fde5ef1d|a02e18db77ecd424|f76e6c576ab7fc7c|1672123361||t20255.805772582s|cc3857af320a083b|901700|rds|local|vector|||0.835||
