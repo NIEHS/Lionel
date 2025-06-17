@@ -77,13 +77,11 @@ From: rocker/geospatial:latest
 
     # Install R packages
     Rscript -e "devtools::install_github('njtierney/geotargets')"
-    Rscript -e "install.packages(c('pak','tarchetypes','testthat','nhdplusTools','RhpcBLASctl', 'psych'))"
-    Rscript -e "pak::pak('wlandau/crew'); pak::pak('wlandau/crew.cluster')"
+    Rscript -e "install.packages(c('pak','tarchetypes','testthat','nhdplusTools','RhpcBLASctl', 'psych','crew','crew.cluster'))"
     Rscript -e "pak::pkg_install(c('ropensci/chopin'))"  
     Rscript -e "devtools::install_github('NIEHS/PrestoGP')"
     Rscript -e "pak::pak('NIEHS/amadeus')"
     Rscript -e "pak::pak('ropensci/targets')"
-    Rscript -e "pak::pak('r-gregmisc/gtools')"
     Rscript -e "pak::pkg_install(c('qs','qs2','rsample','stats','parsnip','fastDummies','scales'))"
     Rscript -e "pak::pkg_install(c('exactextractr','dataRetrieval','gt'))"
     Rscript -e "pak::pkg_install(c('ggridges','skimr','webshot2'))"

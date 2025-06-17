@@ -1,9 +1,9 @@
 #!/bin/bash
 #SBATCH --job-name=lionel
-#SBATCH --partition=geo
+#SBATCH --partition=normal
 #SBATCH --output=slurm_messages/slurm-%j.out
 #SBATCH --error=slurm_messages/slurm-%j.err
-#SBATCH --mail-user=moylanhm@nih.gov
+#SBATCH --mail-user=${USER}@nih.gov
 #SBATCH --mail-type=ALL
 
 # usage: build_apptainer_image.sh [full file path]
