@@ -9,7 +9,7 @@
 library(targets)
 library(tarchetypes)
 library(geotargets)
-library(PrestoGP)
+library(nhdplusTools)
 library(tibble)
 library(stringr)
 library(sf)
@@ -40,7 +40,7 @@ terra::terraOptions(memfrac = 0.1)
 
 
 tar_config_set(
-  store = "/opt/_targets"
+  store = "/opt/_targets/"
 )
 
 
@@ -59,11 +59,11 @@ default_controller <- crew::crew_controller_local(
 ### `controller_gpu` uses 4 GPU workers (undefined memory allocation).
 scriptlines_apptainer <- "apptainer"
 scriptlines_basedir <- "$PWD"
-scriptlines_targetdir <- "/ddn/gs1/home/messierkp/projects/pipeline_PrestoGP"
-scriptlines_inputdir <- "/ddn/gs1/home/messierkp/projects/pipeline_PrestoGP/input"
-scriptlines_container <- "prestoGP.sif"
+scriptlines_targetdir <- "/ddn/gs1/home/messierkp/projects/Lionel"
+scriptlines_inputdir <- "/ddn/gs1/home/messierkp/projects/Lionel/inst/input"
+scriptlines_container <- "Lionel.sif"
 scriptlines_gpu <- glue::glue(
-  "#SBATCH --job-name=prestogp_gpu \
+  "#SBATCH --job-name=lionel_gpu \
   #SBATCH --mail-user=kyle.messier@nih.gov
   #SBATCH --partition=geo \
   #SBATCH --gres=gpu:1 \
@@ -72,7 +72,7 @@ scriptlines_gpu <- glue::glue(
   "CUDA_VISIBLE_DEVICES=${{GPU_DEVICE_ORDINAL}} ",
   "--bind {scriptlines_basedir}:/mnt ",
   "--bind {scriptlines_basedir}/inst:/inst ",
-  "--bind {scriptlines_inputdir}:/input ",
+  "--bind {scriptlines_inputdir}:/inst/input ",
   "--bind {scriptlines_targetdir}/targets:/opt/_targets ",
   "{scriptlines_container} \\"
 )
@@ -85,31 +85,6 @@ controller_gpu <- crew.cluster::crew_controller_slurm(
   )
 )
 
-scriptlines_cpu <- glue::glue(
-  "#SBATCH --job-name=prestogp_cpu \
-  #SBATCH --mail-user=kyle.messier@nih.gov
-  #SBATCH --partition=highmem \
-  #SBATCH --cpus-per-task=1
-  #SBATCH --ntasks-per-node=1
-  #SBATCH --mem=64G
-  #SBATCH --nodes=1  
-  #SBATCH --error=slurm/prestogp_cpu_%j.out \
-  #SBATCH --error=slurm/prestogp_cpu_%j.err \
-  {scriptlines_apptainer} exec --nv --env ",
-  "--bind {scriptlines_basedir}:/mnt ",
-  "--bind {scriptlines_basedir}/inst:/inst ",
-  "--bind {scriptlines_inputdir}:/input ",
-  "--bind {scriptlines_targetdir}/targets:/opt/_targets ",
-  "{scriptlines_container} \\"
-)
-controller_cpu <- crew.cluster::crew_controller_slurm(
-  name = "controller_cpu",
-  workers = 4,
-  options_cluster = crew.cluster::crew_options_slurm(
-    verbose = TRUE,
-    script_lines = scriptlines_cpu
-  )
-)
 
 tar_option_set(
   packages = c(
@@ -152,7 +127,6 @@ tar_option_set(
   format = "qs",
   controller = crew::crew_controller_group(
     default_controller,
-    controller_cpu,
     controller_gpu
   ),
   resources = tar_resources(
@@ -163,39 +137,15 @@ tar_option_set(
   garbage_collection = 100,
   storage = "worker",
   retrieval = "worker",
-  error = "abridge"
+  error = "continue"
 )
 
 
 # Run the R scripts in the R/ folder with your custom functions:
-tar_source("inst/targets/targets_nwis.R")
-tar_source("inst/targets/targets_tox.R")
-tar_source("inst/targets/targets_huc.R")
-tar_source("inst/targets/targets_exploratory.R")
-tar_source("inst/targets/targets_covariates.R")
-tar_source("inst/targets/targets_cov_process.R")
-tar_source("inst/targets/targets_enviroatlas.R")
-tar_source("inst/targets/targets_cov_modis.R")
-tar_source("inst/targets/targets_fit_prestogp.R")
-tar_source("inst/targets/targets_simulations.R")
-tar_source() # R/ supporting functions
+tar_source("inst/targets/targets_data.R")
+tar_source()
 
 #  The TARGET LIST
 list(
-  targets_nwis,
-  targets_tox,
-  targets_huc,
-  targets_exploratory,
-  targets_covariates,
-  targets_cov_process,
-  targets_enviroatlas,
-  targets_cov_modis,
-  targets_simulations,
-  targets_fit_prestogp
+  targets_data
 )
-
-# 3. Run PrestoGP model on local machine for small test case
-# 3a. Target for the model results 3b. Target for the model metrics
-# 4. Run PrestoGP on local machine
-# 5. Run PrestoGP on HPC-GEO
-# 6. Compare with penalized Tobit regression for single variables (https://github.com/TateJacobson/tobitnet)
