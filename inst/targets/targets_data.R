@@ -81,8 +81,7 @@ targets_data <- list(
               "MeasureQualifier" = "MeasureQualifierCode",
               "ResultStatus" = "ResultStatusIdentifier",
               "ResultComment" = "ResultCommentText",
-              "DetectionQuantitationLimit" = `DetectionQuantitationLimitMeasure/MeasureValue`,
-              "CoordReferenceSys" = "HorizontalCoordinateReferenceSystemDatumName"
+              "DetectionQuantitationLimit" = `DetectionQuantitationLimitMeasure/MeasureValue`
             )
           )
         )
@@ -129,6 +128,12 @@ targets_data <- list(
         )
     },
     description = "WQP | Join"
+  ),
+    tar_target(
+      # this target maps all WQP nutrient data by chemical color
+      name = southeast_nutrients
+      command = nutrient_map(nutrient_data_join, CoordReferenceSys)
+      format = 
   )
 
   # tar_target(
