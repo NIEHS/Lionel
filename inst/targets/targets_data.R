@@ -26,7 +26,8 @@ targets_data <- list(
               "VerticalValue" = "VerticalMeasure/MeasureValue",
               "WellDepth" = "WellDepthMeasure/MeasureValue",
               "WellHole" = "WellHoleDepthMeasure/MeasureValue",
-              "ConstructionDate" = "ConstructionDateText"
+              "ConstructionDate" = "ConstructionDateText",
+              "CoordReferenceSys" = "HorizontalCoordinateReferenceSystemDatumName"
             )
           )
         )
@@ -69,7 +70,7 @@ targets_data <- list(
             col_select = c(
               "Org" = "OrganizationIdentifier",
               "SiteID" = "MonitoringLocationIdentifier",
-              "SiteName" = "MonitoringLocationTypeName",
+              "SiteName" = "MonitoringLocationName",
               "SampleDate" = "ActivityStartDate",
               "MonitorName" = "MonitoringLocationName",
               "ChemName" = "CharacteristicName",
@@ -80,7 +81,8 @@ targets_data <- list(
               "MeasureQualifier" = "MeasureQualifierCode",
               "ResultStatus" = "ResultStatusIdentifier",
               "ResultComment" = "ResultCommentText",
-              "DetectionQuantitationLimit" = `DetectionQuantitationLimitMeasure/MeasureValue`
+              "DetectionQuantitationLimit" = `DetectionQuantitationLimitMeasure/MeasureValue`,
+              "CoordReferenceSys" = "HorizontalCoordinateReferenceSystemDatumName"
             )
           )
         )
@@ -117,7 +119,8 @@ targets_data <- list(
           ResultComment,
           DetectionQuantitationLimit,
           Latitude,
-          Longitude
+          Longitude,
+          CoordReferenceSys
         ) |>
         rename(
           SiteName = SiteName.x,
