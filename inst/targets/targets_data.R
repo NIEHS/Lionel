@@ -1,109 +1,132 @@
 targets_data <- list(
   tar_target(
-    name = download_wbd,
-    command = nhdplusTools::download_wbd(
-      outdir = "/inst/input/wbd",
-      url = paste0(
-        "https://prd-tnm.s3.amazonaws.com/StagedProducts/",
-        "Hydrography/WBD/National/GDB/WBD_National_GDB.zip"
-      ),
-      progress = FALSE
-    ),
-    description = "NWIS | Download WBD"
-  ),
-
-  tar_target(
-    state_list,
-    state.abb[c(1, 9, 10, 24, 33, 40, 42)],
-    description = "NWIS | State List"
-  ),
-
-  tar_target(
-    date_range,
-    c("2010-01-01", "2019-12-31"),
-    description = "NWIS | Date Range"
-  ),
-  tar_target(
-    yearly_date_chunks,
-    {
-      # Parse the date strings
-      start_date <- as.Date(date_range[1])
-      end_date <- as.Date(date_range[2])
-
-      # Get all years in the range
-      years <- seq(
-        from = lubridate::year(start_date),
-        to = lubridate::year(end_date)
+    name = nutrient_stations,
+    command = {
+      # Define the directory containing your CSV files
+      station_files <- list.files(
+        path = "inst/input/raw_data/",
+        pattern = "station.csv$",
+        recursive = TRUE,
+        full.names = TRUE
       )
 
-      # Create list of yearly date chunks
-      purrr::map(years, function(y) {
-        from <- as.Date(sprintf("%d-01-01", y))
-        to <- as.Date(sprintf("%d-12-31", y))
-        # Trim to within the date_range bounds
-        from <- max(from, start_date)
-        to <- min(to, end_date)
-        c(from, to)
-      })
+      # Read and bind all CSV files into one data frame
+      combined_df <- station_files |>
+        map_dfr(
+          ~ read_csv(
+            .x,
+            col_select = c(
+              "Org" = "OrganizationIdentifier",
+              "SiteID" = "MonitoringLocationIdentifier",
+              "SiteType" = "MonitoringLocationTypeName",
+              "SiteName" = "MonitoringLocationName",
+              "MonitorName" = "MonitoringLocationName",
+              "Latitude" = "LatitudeMeasure",
+              "Longitude" = "LongitudeMeasure",
+              "VerticalValue" = "VerticalMeasure/MeasureValue",
+              "WellDepth" = "WellDepthMeasure/MeasureValue",
+              "WellHole" = "WellHoleDepthMeasure/MeasureValue",
+              "ConstructionDate" = "ConstructionDateText"
+            )
+          )
+        )
     },
-    description = "List of yearly date ranges"
+    description = "WQP | Process Data | Stations"
   ),
-
   tar_target(
-    name = nutrient_codes,
+    name = nutrient_physchem,
     command = {
-      readr::read_tsv(
-        file = "inst/input/usgs_param_codes_nutrients.txt",
-        skip = 7,
-        col_names = TRUE,
-        comment = "5s"
+      # Define the directory containing your CSV files
+      physchem_files <- list.files(
+        path = "inst/input/raw_data/",
+        pattern = "resultphyschem.csv$",
+        recursive = TRUE,
+        full.names = TRUE
       )
-    },
-    description = "NWIS | Read | Parameter Codes"
-  ),
 
+      col_types_spec <- cols_only(
+        OrganizationIdentifier = col_character(),
+        MonitoringLocationIdentifier = col_character(),
+        MonitoringLocationTypeName = col_character(),
+        ActivityStartDate = col_character(),
+        MonitoringLocationName = col_character(),
+        ResultDetectionConditionText = col_character(),
+        ResultMeasureValue = col_double(),
+        `ResultMeasure/MeasureUnitCode` = col_character(),
+        CharacteristicName = col_character(),
+        ResultSampleFractionText = col_character(),
+        MeasureQualifierCode = col_character(),
+        ResultStatusIdentifier = col_character(),
+        ResultCommentText = col_character(),
+        `DetectionQuantitationLimitMeasure/MeasureValue` = col_double()
+      )
+
+      combined_df <- physchem_files |>
+        map_dfr(
+          ~ read_csv(
+            .x,
+            col_types = col_types_spec,
+            col_select = c(
+              "Org" = "OrganizationIdentifier",
+              "SiteID" = "MonitoringLocationIdentifier",
+              "SiteName" = "MonitoringLocationName",
+              "SampleDate" = "ActivityStartDate",
+              "MonitorName" = "MonitoringLocationName",
+              "ChemName" = "CharacteristicName",
+              "ChemValue" = "ResultMeasureValue",
+              "ChemUnit" = `ResultMeasure/MeasureUnitCode`,
+              "SampleFraction" = "ResultSampleFractionText",
+              "DetectionCondition" = "ResultDetectionConditionText",
+              "MeasureQualifier" = "MeasureQualifierCode",
+              "ResultStatus" = "ResultStatusIdentifier",
+              "ResultComment" = "ResultCommentText",
+              "DetectionQuantitationLimit" = `DetectionQuantitationLimitMeasure/MeasureValue`
+            )
+          )
+        )
+    },
+    description = "WQP | Process Data | Chem"
+  ),
   tar_target(
-    # This target gets the nwis_site_info for the parameters
-    name = nutrient_nwis_info,
+    # This target creates the state-level nutrient data from NWIS
+    name = nutrient_data_join,
     command = {
-      dataRetrieval::pcode_to_name(nutrient_codes$parm_cd) |>
-        as_tibble()
+      nutrient_physchem |>
+        left_join(
+          nutrient_stations,
+          by = c("SiteID" = "SiteID")
+        ) |>
+        mutate(
+          SampleDate = lubridate::ymd(SampleDate),
+          Latitude = as.numeric(Latitude),
+          Longitude = as.numeric(Longitude)
+        ) |>
+        select(
+          SiteID,
+          Org.x,
+          SiteName.x,
+          MonitorName.x,
+          SampleDate,
+          ChemName,
+          ChemValue,
+          ChemUnit,
+          SampleFraction,
+          DetectionCondition,
+          MeasureQualifier,
+          ResultStatus,
+          ResultComment,
+          DetectionQuantitationLimit,
+          Latitude,
+          Longitude
+        ) |>
+        rename(
+          SiteName = SiteName.x,
+          MonitorName = MonitorName.x,
+          Org = Org.x
+        )
     },
-    description = "NWIS | Site Info"
-  ),
-
-  tar_target(
-    # Get the parm_cd field and rename to parameterCd
-    name = parameterCd,
-    command = nutrient_nwis_info$parm_cd |>
-      as.data.table() |>
-      setnames("parameterCd"),
-    description = "NWIS | parameterCd"
-  ),
-
-  tar_target(
-    nutrient_data_parm_cd,
-    get_nutrient_data(
-      state_list,
-      parameterCd,
-      yearly_date_chunks,
-      timeout_minutes_per_site = 0.01,
-      verbose = TRUE
-    ),
-    pattern = cross(state_list, parameterCd, yearly_date_chunks),
-    error = "null",
-    iteration = "list",
-    description = "NWIS | Retrieve Data"
+    description = "WQP | Join"
   )
-
-  # tar_target(
-  #   # This target creates the state-level nutrient data from NWIS
-  #   name = nutrient_data_join,
-  #   command = join_site_info(nutrient_data_parm_cd),
-  #   pattern = map(nutrient_data_parm_cd),
-  #   iteration = "list",
-  #   description = "NWIS | Site Info Join"
-  # ),
 
   # tar_target(
   #   # This target gets the censoring aspects of the data
