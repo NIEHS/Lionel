@@ -8,7 +8,6 @@
 # Load packages required to define the pipeline:
 library(targets)
 library(tarchetypes)
-library(geotargets)
 library(nhdplusTools)
 library(tibble)
 library(stringr)
@@ -99,7 +98,6 @@ tar_option_set(
     "stats",
     "ggplot2",
     "tarchetypes",
-    "geotargets",
     "parsnip",
     "fastDummies",
     "stringr",

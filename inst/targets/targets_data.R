@@ -69,7 +69,7 @@ targets_data <- list(
             col_select = c(
               "Org" = "OrganizationIdentifier",
               "SiteID" = "MonitoringLocationIdentifier",
-              "SiteName" = "MonitoringLocationName",
+              "SiteName" = "MonitoringLocationTypeName",
               "SampleDate" = "ActivityStartDate",
               "MonitorName" = "MonitoringLocationName",
               "ChemName" = "CharacteristicName",
