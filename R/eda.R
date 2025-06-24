@@ -4,8 +4,11 @@ nutrient_map <- function(file, crs_column) {
     "NAD83" = 4269,
     "NAD27" = 4267,
     "WAKE" = 4733,
-    "WGS84" = 4327
+    "WGS84" = 4326
   )
+
+  # ensure crs_column is a character vector
+  file[[crs_column]] <- as.character(file[[crs_column]])
 
   # convert list to vector without changing naming
   lookup <- setNames(unlist(crs_to_epsg), names(crs_to_epsg))
@@ -33,7 +36,7 @@ nutrient_map <- function(file, crs_column) {
       # within split_by_crs, grab all rows for first crs_epsg entry passed through the loop
       grouped_by_crs <- split_by_crs[[crs_epsg]]
 
-      # lat, long, and crs used to create sf spatial object
+      # lat, long, and crs used to create sf spatial object for the first crs_epsg entry passed
       # use as.integer because names(split_by_crs) returns character strings, st_as_sf() requires integers
       st_as_sf(
         grouped_by_crs,
@@ -63,30 +66,65 @@ nutrient_map <- function(file, crs_column) {
   )
   se <- us_states %>%
     dplyr::filter(
-      name ==
+      name %in%
         c(
           "Alabama",
           "Florida",
           "Georgia",
           "North Carolina",
           "South Carolina",
-          "Virginia",
           "Mississippi",
           "Tennessee"
         )
     ) %>%
     st_transform(crs = 4269)
 
+  # assign each point to a state using spatial join tool
+  joined_station_se <- st_join(station_coordinates, se["name"]) %>%
+    rename(state = name) %>%
+    st_drop_geometry()
+
+  write.csv(
+    joined_station_se,
+    file = "inst/visualize/nutrient_data_with_state.csv",
+    row.names = FALSE
+  )
+
+  "inst/visualize/nutrient_data_with_state.csv"
+
+  station_coordinates$ChemName <- forcats::fct_lump(
+    station_coordinates$ChemName,
+    n = 5
+  )
+
+  se_bbox <- st_bbox(se)
+
   # create the map
-  ggplot() +
+  se_nutrients_map <- ggplot() +
     geom_sf(data = se, fill = "white", color = "black") +
     geom_sf(
-      data = station_coordinates$ChemName,
+      data = station_coordinates,
       aes(color = ChemName),
-      size = 2,
+      size = 0.5,
       alpha = 0.8
     ) +
-    coord_sf(crs = 4269) +
+    coord_sf(
+      crs = 4269,
+      xlim = c(se_bbox["xmin"], se_bbox["xmax"]),
+      ylim = c(se_bbox["ymin"], se_bbox["ymax"])
+    ) +
     theme_minimal() +
+    theme(legend.key.size = unit(0.5, "cm")) +
     labs(title = "WQP Results by Chemical Name")
+
+  ggsave(
+    "inst/figs/se_nutrients_map.png",
+    plot = se_nutrients_map,
+    width = 11,
+    height = 8
+  )
+
+  "inst/figs/se_nutrients_map.png"
 }
+
+#  table(nutrient_data_join$CoordReferenceSys)
