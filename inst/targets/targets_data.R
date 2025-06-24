@@ -137,6 +137,24 @@ targets_data <- list(
       crs_column = "CoordReferenceSys"
     ),
     format = "file"
+  ),
+  tar_target(
+    # this target establishes the nutrient file containing state information
+    name = nutrient_data_with_state,
+    command = "inst/visualize/nutrient_data_with_state.csv",
+    format = "file"
+  ),
+  tar_target(
+    # this target creates a barchart for the distribution of sample nutrient type collected within a year by state
+    name = nutrient_barchart_by_state,
+    command = chem_bar_chart(nutrient_data_with_state),
+    format = "file"
+  ),
+  tar_target(
+    # this target creates maps for the top nutrients sampled in the southeast
+    name = se_top_nutrients_maps,
+    command = top_nutrients_maps(nutrient_data_with_state),
+    format = "file"
   )
 
   # tar_target(
