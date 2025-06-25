@@ -1,3 +1,8 @@
+# eda
+# functions: nutrient map(), chem_bar_chart(), top_nutrients_maps
+
+###---------------------------------------------------------------------------------------------------------
+
 nutrient_map <- function(file, crs_column) {
   # change the crs entry within the crs column of the dataset to epsg codes right away
   crs_to_epsg <- list(
@@ -50,7 +55,8 @@ nutrient_map <- function(file, crs_column) {
       st_as_sf(
         grouped_by_crs,
         coords = c("Longitude", "Latitude"),
-        crs = as.integer(crs_epsg)
+        crs = as.integer(crs_epsg),
+        remove = FALSE
       )
     }
   )
@@ -144,6 +150,8 @@ nutrient_map <- function(file, crs_column) {
   "inst/figs/se_nutrients_map.png"
 }
 
+###---------------------------------------------------------------------------------------------------------
+
 chem_bar_chart <- function(file) {
   file_sample_year <- read_csv(file) %>%
     mutate(year = year(SampleDate))
@@ -181,7 +189,50 @@ chem_bar_chart <- function(file) {
   "inst/figs/chem_bar_chart.png"
 }
 
+###---------------------------------------------------------------------------------------------------------
+
 top_nutrients_maps <- function(file) {
+  data <- read_csv(file)
+
+  split_by_crs <- split(data, data$crs_epsg)
+
+  # individually create sf objects by crs
+  # lapply() ensures that each unique data frame within split_by_crs is passed through the function
+  sf_list <- lapply(
+    names(split_by_crs),
+    function(crs_epsg) {
+      #check for invalid or unmapped crs_column entries
+      if (is.na(crs_epsg) || crs_epsg == "") {
+        warning("Skipping group with missing or unknown CRS")
+        return(NULL)
+      }
+
+      # within split_by_crs, grab all rows for first crs_epsg entry passed through the loop
+      grouped_by_crs <- split_by_crs[[crs_epsg]]
+
+      # lat, long, and crs used to create sf spatial object for the first crs_epsg entry passed
+      # use as.integer because names(split_by_crs) returns character strings, st_as_sf() requires integers
+      st_as_sf(
+        grouped_by_crs,
+        coords = c("Longitude", "Latitude"),
+        crs = as.integer(crs_epsg)
+      )
+    }
+  )
+
+  # remove NULL entries to prevent error when combining data frames again
+  # if input is not NULL, Negate(is.null) will return TRUE and remove if FALSE
+  sf_list <- Filter(Negate(is.null), sf_list)
+
+  # for each unique epsg, transfrom to epsg code 4269
+  sf_list_with_epsg <- lapply(sf_list, function(x) {
+    st_transform(x, crs = 4269)
+  })
+
+  # combines the sf objects
+  station_coordinates <- do.call(rbind, sf_list_with_epsg) %>%
+    st_transform(crs = 4269)
+
   us_states <- rnaturalearth::ne_states(
     country = "United States of America",
     returnclass = "sf"
@@ -201,9 +252,9 @@ top_nutrients_maps <- function(file) {
     ) %>%
     st_transform(crs = 4269)
 
-  spatial_coords <- st_as_sf(
-    read_csv(file),
-    coords = c("Longitude", "Latitude")
+  station_coordinates$ChemName <- forcats::fct_lump(
+    station_coordinates$ChemName,
+    n = 7
   )
 
   se_bbox <- st_bbox(se)
@@ -212,24 +263,24 @@ top_nutrients_maps <- function(file) {
   se_top_nutrients_maps <- ggplot() +
     geom_sf(data = se, fill = "white", color = "black") +
     geom_sf(
-      data = spatial_coords,
+      data = station_coordinates,
       aes(color = ChemName),
-      size = 0.5,
-      alpha = 0.8
+      size = 0.3,
+      alpha = 0.2
     ) +
-    facet_wrap(~state)
-  coord_sf(
-    crs = 4269,
-    xlim = c(se_bbox["xmin"], se_bbox["xmax"]),
-    ylim = c(se_bbox["ymin"], se_bbox["ymax"])
-  ) +
+    facet_wrap(~ChemName) +
+    coord_sf(
+      crs = 4269,
+      xlim = c(se_bbox["xmin"], se_bbox["xmax"]),
+      ylim = c(se_bbox["ymin"], se_bbox["ymax"])
+    ) +
     theme_minimal() +
-    theme(legend.key.size = unit(0.5, "cm")) +
+    theme(legend.position = "none") +
     labs(title = "Nutrients Sampled in Southeastern US")
 
   ggsave(
     "inst/figs/se_top_nutrients_maps.png",
-    plot = se_top_nutrients_map,
+    plot = se_top_nutrients_maps,
     width = 11,
     height = 8
   )

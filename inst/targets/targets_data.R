@@ -117,6 +117,7 @@ targets_data <- list(
           ResultStatus,
           ResultComment,
           DetectionQuantitationLimit,
+          WellDepth,
           Latitude,
           Longitude,
           CoordReferenceSys
@@ -154,6 +155,22 @@ targets_data <- list(
     # this target creates maps for the top nutrients sampled in the southeast
     name = se_top_nutrients_maps,
     command = top_nutrients_maps(nutrient_data_with_state),
+    format = "file"
+  ),
+  tar_target(
+    # this target creates a table counting the various units in which each nutrient is measured
+    name = nutrient_unit_data,
+    command = get_unit_distribution(
+      file = nutrient_data_with_state,
+      nutrient_column = "ChemName",
+      unit_column = "ChemUnit",
+      detect_column = "DetectionCondition"
+    )
+  ),
+  tar_target(
+    # this target establishes the nutrient units file
+    name = unit_distribution,
+    command = "inst/visualize/unit_distribution.csv",
     format = "file"
   )
 
