@@ -59,7 +59,9 @@ targets_data <- list(
         MeasureQualifierCode = col_character(),
         ResultStatusIdentifier = col_character(),
         ResultCommentText = col_character(),
-        `DetectionQuantitationLimitMeasure/MeasureValue` = col_double()
+        `DetectionQuantitationLimitMeasure/MeasureValue` = col_double(),
+        `ResultAnalyticalMethod/MethodName` = col_character(),
+        `ResultAnalyticalMethod/MethodIdentifier` = col_character()
       )
 
       combined_df <- physchem_files |>
@@ -81,7 +83,9 @@ targets_data <- list(
               "MeasureQualifier" = "MeasureQualifierCode",
               "ResultStatus" = "ResultStatusIdentifier",
               "ResultComment" = "ResultCommentText",
-              "DetectionQuantitationLimit" = `DetectionQuantitationLimitMeasure/MeasureValue`
+              "DetectionQuantitationLimit" = `DetectionQuantitationLimitMeasure/MeasureValue`,
+              "AnalyticalMethodName" = `ResultAnalyticalMethod/MethodName`,
+              "AnalyticalMethodID" = `ResultAnalyticalMethod/MethodIdentifier`
             )
           )
         )
@@ -120,7 +124,9 @@ targets_data <- list(
           WellDepth,
           Latitude,
           Longitude,
-          CoordReferenceSys
+          CoordReferenceSys,
+          AnalyticalMethodName,
+          AnalyticalMethodID
         ) |>
         rename(
           SiteName = SiteName.x,
@@ -131,37 +137,50 @@ targets_data <- list(
     description = "WQP | Join"
   ),
   tar_target(
-    # this target maps all WQP nutrient data by chemical color
-    name = southeast_nutrients,
-    command = nutrient_map(
-      file = nutrient_data_join,
-      crs_column = "CoordReferenceSys"
-    ),
+    # this target creates a spatial object from nutrient data join and WQP station coordinates
+    name = station_coords,
+    command = create_station_coords_sf(nutrient_data_join, CoordReferenceSys)
+  ),
+  tar_target(
+    # this target is the same as se_stations_as_sf but geometry is dropped
+    name = se_stations,
+    command = {
+      se_stations <- se_stations %>%
+        st_drop_geometry()
+    }
+  ),
+  tar_target(
+    # this target writes se_stations to a csv
+    name = se_stations_csv,
+    command = {
+      write.csv(se_stations, "inst/visualize/se_stations.csv")
+
+      "inst/visualize/se_stations.csv"
+    },
     format = "file"
   ),
   tar_target(
-    # this target establishes the nutrient file containing state information
-    name = nutrient_data_with_state,
-    command = "inst/visualize/nutrient_data_with_state.csv",
-    format = "file"
+    # this target maps all WQP nutrients across the southeast US
+    name = se_stations_map,
+    command = map_se_stations(se_stations_as_sf)
   ),
   tar_target(
     # this target creates a barchart for the distribution of sample nutrient type collected within a year by state
-    name = nutrient_barchart_by_state,
-    command = chem_bar_chart(nutrient_data_with_state),
+    name = se_nutrients_barchart,
+    command = barchart_nutrients(se_stations_as_sf),
     format = "file"
   ),
   tar_target(
     # this target creates maps for the top nutrients sampled in the southeast
     name = se_top_nutrients_maps,
-    command = top_nutrients_maps(nutrient_data_with_state),
+    command = plot_top_7_se_nutrients(se_stations),
     format = "file"
   ),
   tar_target(
     # this target creates a table counting the various units in which each nutrient is measured
     name = nutrient_unit_data,
     command = get_unit_distribution(
-      file = nutrient_data_with_state,
+      file = se_stations,
       nutrient_column = "ChemName",
       unit_column = "ChemUnit",
       detect_column = "DetectionCondition"
@@ -171,6 +190,11 @@ targets_data <- list(
     # this target establishes the nutrient units file
     name = unit_distribution,
     command = "inst/visualize/unit_distribution.csv",
+    format = "file"
+  ),
+  tar_target(
+    name = all_nutrient_barchart,
+    command = all_chem_bar_chart(nutrient_data_with_state),
     format = "file"
   )
 
