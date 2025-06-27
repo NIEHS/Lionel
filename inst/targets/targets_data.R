@@ -136,68 +136,73 @@ targets_data <- list(
     },
     description = "WQP | Join"
   ),
-  tar_target(
-    # this target creates a spatial object from nutrient data join and WQP station coordinates
-    name = station_coords,
-    command = create_station_coords_sf(nutrient_data_join, CoordReferenceSys)
-  ),
-  tar_target(
-    # this target is the same as se_stations_as_sf but geometry is dropped
-    name = se_stations,
-    command = {
-      se_stations <- se_stations %>%
-        st_drop_geometry()
-    }
-  ),
-  tar_target(
-    # this target writes se_stations to a csv
-    name = se_stations_csv,
-    command = {
-      write.csv(se_stations, "inst/visualize/se_stations.csv")
 
-      "inst/visualize/se_stations.csv"
+  tar_target(
+    # this target modifies nutrient_data_join to add crs and state columns
+    name = se_stations_data,
+    command = get_se_stations_data(nutrient_data_join, CoordReferenceSys)
+  ),
+  tar_target(
+    # this target writes se_stations_data to a csv
+    name = se_stations_file,
+    command = {
+      write.csv(
+        se_stations_data,
+        file = "inst/tabs/se_stations_file.csv",
+        row.names = FALSE
+      )
+
+      "inst/tabs/se_stations_file.csv"
     },
     format = "file"
   ),
   tar_target(
-    # this target maps all WQP nutrients across the southeast US
-    name = se_stations_map,
-    command = map_se_stations(se_stations_as_sf)
-  ),
-  tar_target(
-    # this target creates a barchart for the distribution of sample nutrient type collected within a year by state
-    name = se_nutrients_barchart,
-    command = barchart_nutrients(se_stations_as_sf),
+    name = all_nutrient_barchart,
+    command = barchart_all_nutrients(se_stations_data),
     format = "file"
   ),
   tar_target(
-    # this target creates maps for the top nutrients sampled in the southeast
-    name = se_top_nutrients_maps,
-    command = plot_top_7_se_nutrients(se_stations),
+    # this target filters se_stations_data to nutrient entries: nitrate, nitrite, orthophosphate, and ammonia and ammonium
+    name = filtered_station_nutrients,
+    command = filter_se_stations(se_stations_data)
+  ),
+  tar_target(
+    # this target maps nitrate, nitrite, orthophosphate, and ammonia and ammonium across the southeastern US
+    name = se_stations_map,
+    command = map_se_stations(filtered_station_nutrients),
+    format = "file"
+  ),
+  tar_target(
+    # this target creates a stacked barchart for yearly nutrient sampling frequency by state
+    name = sampling_by_state_barchart,
+    command = barchart_sampling_by_state(filtered_station_nutrients),
+    format = "file"
+  ),
+  tar_target(
+    # this target creates a figure displaying four maps of the southeast highlighting sampling efforts for nitrate, nitrite, orthophosphate, and ammonia and ammonium
+    name = nutrient_sampling_maps,
+    command = map_nutrient_sampling(filtered_station_nutrients),
     format = "file"
   ),
   tar_target(
     # this target creates a table counting the various units in which each nutrient is measured
-    name = nutrient_unit_data,
-    command = get_unit_distribution(
-      file = se_stations,
-      nutrient_column = "ChemName",
-      unit_column = "ChemUnit",
-      detect_column = "DetectionCondition"
-    )
+    name = unit_data,
+    command = get_unit_data(se_stations_data)
   ),
   tar_target(
     # this target establishes the nutrient units file
-    name = unit_distribution,
-    command = "inst/visualize/unit_distribution.csv",
-    format = "file"
-  ),
-  tar_target(
-    name = all_nutrient_barchart,
-    command = all_chem_bar_chart(nutrient_data_with_state),
+    name = unit_data_file,
+    command = {
+      write.csv(
+        unit_data,
+        file = "inst/tabs/unit_distribution.csv",
+        row.names = FALSE
+      )
+
+      "inst/tabs/unit_distribution.csv"
+    },
     format = "file"
   )
-
   # tar_target(
   #   # This target gets the censoring aspects of the data
   #   name = nutrient_censored_check,
