@@ -202,6 +202,18 @@ targets_data <- list(
       "inst/tabs/unit_distribution.csv"
     },
     format = "file"
+  ),
+  tar_target(
+    # this target creates a barchart for the number of samples analyzed using a certain analytical method by nutrient
+    name = analytical_method_barchart,
+    command = barchart_analytical_methods(filtered_station_nutrients),
+    format = "file"
+  ),
+  tar_target(
+    # this target creates a barchart for the number of samples reported using a certain unit by nutrient
+    name = nutrient_unit_barchart,
+    command = barchart_nutrient_units(filtered_station_nutrients),
+    format = "file"
   )
   # tar_target(
   #   # This target gets the censoring aspects of the data

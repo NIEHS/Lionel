@@ -4,12 +4,28 @@
 ###---------------------------------------------------------------------------------------------------------
 
 map_se_stations <- function(data) {
-  data_sf <- data %>%
-    st_as_sf(
-      coords = c("Longitude", "Latitude"),
-      crs = 4269,
-      remove = FALSE
-    )
+  sf_list <- data %>%
+    split(.$crs_epsg) %>%
+    imap(
+      ~ {
+        if (is.na(.y) || .y == "") {
+          warning("Skipping group with missing or unknown crs")
+          return(NULL)
+        }
+
+        st_as_sf(
+          .x,
+          coords = c("Longitude", "Latitude"),
+          crs = as.integer(.y),
+          remove = FALSE
+        )
+      }
+    ) %>%
+    compact() %>%
+    map(~ st_transform(.x, crs = 4269))
+
+  # combine the sf data to one object
+  stations <- bind_rows(sf_list)
 
   se <- rnaturalearth::ne_states(
     country = "United States of America",
@@ -35,7 +51,7 @@ map_se_stations <- function(data) {
   se_stations_map <- ggplot() +
     geom_sf(data = se, fill = "white", color = "black") +
     geom_sf(
-      data = data_sf,
+      data = stations,
       aes(color = ChemName),
       size = 0.5,
       alpha = 0.8
@@ -72,7 +88,7 @@ barchart_sampling_by_state <- function(data) {
     aes(x = factor(year), fill = ChemName)
   ) +
     geom_bar(position = "stack") +
-    facet_wrap(~state, scale = "free_x") +
+    facet_wrap(~state, scales = "free_x") +
     labs(
       title = "Yearly Nutrient Sampling Frequency by State",
       x = "Sample Year",
@@ -98,12 +114,28 @@ barchart_sampling_by_state <- function(data) {
 ###---------------------------------------------------------------------------------------------------------
 
 map_nutrient_sampling <- function(data) {
-  data_sf <- data %>%
-    st_as_sf(
-      coords = c("Longitude", "Latitude"),
-      crs = 4269,
-      remove = FALSE
-    )
+  sf_list <- data %>%
+    split(.$crs_epsg) %>%
+    imap(
+      ~ {
+        if (is.na(.y) || .y == "") {
+          warning("Skipping group with missing or unknown crs")
+          return(NULL)
+        }
+
+        st_as_sf(
+          .x,
+          coords = c("Longitude", "Latitude"),
+          crs = as.integer(.y),
+          remove = FALSE
+        )
+      }
+    ) %>%
+    compact() %>%
+    map(~ st_transform(.x, crs = 4269))
+
+  # combine the sf data to one object
+  stations <- bind_rows(sf_list)
 
   se <- rnaturalearth::ne_states(
     country = "United States of America",
@@ -129,7 +161,7 @@ map_nutrient_sampling <- function(data) {
   nutrient_sampling_maps <- ggplot() +
     geom_sf(data = se, fill = "white", color = "black") +
     geom_sf(
-      data = data_sf,
+      data = stations,
       aes(color = ChemName),
       size = 0.3,
       alpha = 0.2
@@ -186,6 +218,62 @@ barchart_all_nutrients <- function(data) {
   )
 
   "inst/figs/all_nutrient_barchart.png"
+}
+
+###---------------------------------------------------------------------------------------------------------
+
+barchart_analytical_methods <- function(data) {
+  analytical_method_barchart <- ggplot() +
+    geom_bar(
+      data = data,
+      mapping = aes(x = factor(AnalyticalMethodName))
+    ) +
+    facet_wrap(~ChemName, scales = "free_x") +
+    labs(
+      title = "Analytical Methods used to Measure Nutrient Concentrations",
+      x = "Analytical Method",
+      y = "Number of Samples",
+      fill = "Nutrient"
+    ) +
+    theme_minimal() +
+    theme(axis.text.x = element_text(angle = 75, hjust = 1))
+
+  ggsave(
+    "inst/figs/analytical_method_barchart.png",
+    plot = analytical_method_barchart,
+    width = 11,
+    height = 8
+  )
+
+  "inst/figs/analytical_method_barchart.png"
+}
+
+###---------------------------------------------------------------------------------------------------------
+
+barchart_nutrient_units <- function(data) {
+  nutrient_unit_barchart <- ggplot() +
+    geom_bar(
+      data = data,
+      mapping = aes(x = factor(ChemUnit))
+    ) +
+    facet_wrap(~ChemName, scales = "free_x") +
+    labs(
+      title = "Units used to Report Nutrient Concentrations",
+      x = "Nutrient Unit",
+      y = "Number of Samples",
+      fill = "Nutrient"
+    ) +
+    theme_minimal() +
+    theme(axis.text.x = element_text(angle = 75, hjust = 1))
+
+  ggsave(
+    "inst/figs/nutrient_unit_barchart.png",
+    plot = nutrient_unit_barchart,
+    width = 11,
+    height = 8
+  )
+
+  "inst/figs/nutrient_unit_barchart.png"
 }
 
 ###---------------------------------------------------------------------------------------------------------

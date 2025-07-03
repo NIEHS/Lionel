@@ -80,6 +80,7 @@ From: rocker/geospatial:latest
     Rscript -e "install.packages(c('pak','tarchetypes','testthat','nhdplusTools','RhpcBLASctl', 'psych','crew','crew.cluster'))"
     Rscript -e "pak::pkg_install(c('ropensci/chopin'))"  
     Rscript -e "devtools::install_github('NIEHS/PrestoGP')"
+    Rscript -e "remotes::install_github('USEPA/EPATADA')"
     Rscript -e "pak::pak('NIEHS/amadeus')"
     Rscript -e "pak::pak('ropensci/targets')"
     Rscript -e "pak::pkg_install(c('qs','qs2','rsample','stats','parsnip','fastDummies','scales'))"
