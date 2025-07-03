@@ -1,219 +1,189 @@
 targets_data <- list(
-  tar_target(
-    name = nutrient_stations,
-    command = {
-      # Define the directory containing your CSV files
-      station_files <- list.files(
-        path = "inst/input/raw_data/",
-        pattern = "station.csv$",
-        recursive = TRUE,
-        full.names = TRUE
-      )
+  # tar_target(
+  #   name = nutrient_stations,
+  #   command = {
+  #     # Define the directory containing your CSV files
+  #     station_files <- list.files(
+  #       path = "inst/input/raw_data/",
+  #       pattern = "station.csv$",
+  #       recursive = TRUE,
+  #       full.names = TRUE
+  #     )
 
-      # Read and bind all CSV files into one data frame
-      combined_df <- station_files |>
-        map_dfr(
-          ~ read_csv(
-            .x,
-            col_select = c(
-              "Org" = "OrganizationIdentifier",
-              "SiteID" = "MonitoringLocationIdentifier",
-              "SiteType" = "MonitoringLocationTypeName",
-              "SiteName" = "MonitoringLocationName",
-              "MonitorName" = "MonitoringLocationName",
-              "Latitude" = "LatitudeMeasure",
-              "Longitude" = "LongitudeMeasure",
-              "VerticalValue" = "VerticalMeasure/MeasureValue",
-              "WellDepth" = "WellDepthMeasure/MeasureValue",
-              "WellHole" = "WellHoleDepthMeasure/MeasureValue",
-              "ConstructionDate" = "ConstructionDateText",
-              "CoordReferenceSys" = "HorizontalCoordinateReferenceSystemDatumName"
-            )
-          )
-        )
-    },
-    description = "WQP | Process Data | Stations"
-  ),
-  tar_target(
-    name = nutrient_physchem,
-    command = {
-      # Define the directory containing your CSV files
-      physchem_files <- list.files(
-        path = "inst/input/raw_data/",
-        pattern = "resultphyschem.csv$",
-        recursive = TRUE,
-        full.names = TRUE
-      )
+  #     # Read and bind all CSV files into one data frame
+  #     combined_df <- station_files |>
+  #       map_dfr(
+  #         ~ read_csv(
+  #           .x,
+  #           col_select = c(
+  #             "Org" = "OrganizationIdentifier",
+  #             "SiteID" = "MonitoringLocationIdentifier",
+  #             "SiteType" = "MonitoringLocationTypeName",
+  #             "SiteName" = "MonitoringLocationName",
+  #             "MonitorName" = "MonitoringLocationName",
+  #             "Latitude" = "LatitudeMeasure",
+  #             "Longitude" = "LongitudeMeasure",
+  #             "VerticalValue" = "VerticalMeasure/MeasureValue",
+  #             "WellDepth" = "WellDepthMeasure/MeasureValue",
+  #             "WellHole" = "WellHoleDepthMeasure/MeasureValue",
+  #             "ConstructionDate" = "ConstructionDateText",
+  #             "CoordReferenceSys" = "HorizontalCoordinateReferenceSystemDatumName"
+  #           )
+  #         )
+  #       )
+  #   },
+  #   description = "WQP | Process Data | Stations"
+  # ),
+  # tar_target(
+  #   name = nutrient_physchem,
+  #   command = {
+  #     # Define the directory containing your CSV files
+  #     physchem_files <- list.files(
+  #       path = "inst/input/raw_data/",
+  #       pattern = "resultphyschem.csv$",
+  #       recursive = TRUE,
+  #       full.names = TRUE
+  #     )
 
-      col_types_spec <- cols_only(
-        OrganizationIdentifier = col_character(),
-        MonitoringLocationIdentifier = col_character(),
-        MonitoringLocationTypeName = col_character(),
-        ActivityStartDate = col_character(),
-        MonitoringLocationName = col_character(),
-        ResultDetectionConditionText = col_character(),
-        ResultMeasureValue = col_double(),
-        `ResultMeasure/MeasureUnitCode` = col_character(),
-        CharacteristicName = col_character(),
-        ResultSampleFractionText = col_character(),
-        MeasureQualifierCode = col_character(),
-        ResultStatusIdentifier = col_character(),
-        ResultCommentText = col_character(),
-        `DetectionQuantitationLimitMeasure/MeasureValue` = col_double(),
-        `ResultAnalyticalMethod/MethodName` = col_character(),
-        `ResultAnalyticalMethod/MethodIdentifier` = col_character()
-      )
+  #     col_types_spec <- cols_only(
+  #       OrganizationIdentifier = col_character(),
+  #       MonitoringLocationIdentifier = col_character(),
+  #       MonitoringLocationTypeName = col_character(),
+  #       ActivityStartDate = col_character(),
+  #       MonitoringLocationName = col_character(),
+  #       ResultDetectionConditionText = col_character(),
+  #       ResultMeasureValue = col_double(),
+  #       `ResultMeasure/MeasureUnitCode` = col_character(),
+  #       CharacteristicName = col_character(),
+  #       ResultSampleFractionText = col_character(),
+  #       MeasureQualifierCode = col_character(),
+  #       ResultStatusIdentifier = col_character(),
+  #       ResultCommentText = col_character(),
+  #       `DetectionQuantitationLimitMeasure/MeasureValue` = col_double(),
+  #       `ResultAnalyticalMethod/MethodName` = col_character(),
+  #       `ResultAnalyticalMethod/MethodIdentifier` = col_character()
+  #     )
 
-      combined_df <- physchem_files |>
-        map_dfr(
-          ~ read_csv(
-            .x,
-            col_types = col_types_spec,
-            col_select = c(
-              "Org" = "OrganizationIdentifier",
-              "SiteID" = "MonitoringLocationIdentifier",
-              "SiteName" = "MonitoringLocationName",
-              "SampleDate" = "ActivityStartDate",
-              "MonitorName" = "MonitoringLocationName",
-              "ChemName" = "CharacteristicName",
-              "ChemValue" = "ResultMeasureValue",
-              "ChemUnit" = `ResultMeasure/MeasureUnitCode`,
-              "SampleFraction" = "ResultSampleFractionText",
-              "DetectionCondition" = "ResultDetectionConditionText",
-              "MeasureQualifier" = "MeasureQualifierCode",
-              "ResultStatus" = "ResultStatusIdentifier",
-              "ResultComment" = "ResultCommentText",
-              "DetectionQuantitationLimit" = `DetectionQuantitationLimitMeasure/MeasureValue`,
-              "AnalyticalMethodName" = `ResultAnalyticalMethod/MethodName`,
-              "AnalyticalMethodID" = `ResultAnalyticalMethod/MethodIdentifier`
-            )
-          )
-        )
-    },
-    description = "WQP | Process Data | Chem"
-  ),
+  #     combined_df <- physchem_files |>
+  #       map_dfr(
+  #         ~ read_csv(
+  #           .x,
+  #           col_types = col_types_spec,
+  #           col_select = c(
+  #             "Org" = "OrganizationIdentifier",
+  #             "SiteID" = "MonitoringLocationIdentifier",
+  #             "SiteName" = "MonitoringLocationName",
+  #             "SampleDate" = "ActivityStartDate",
+  #             "MonitorName" = "MonitoringLocationName",
+  #             "ChemName" = "CharacteristicName",
+  #             "ChemValue" = "ResultMeasureValue",
+  #             "ChemUnit" = `ResultMeasure/MeasureUnitCode`,
+  #             "SampleFraction" = "ResultSampleFractionText",
+  #             "DetectionCondition" = "ResultDetectionConditionText",
+  #             "MeasureQualifier" = "MeasureQualifierCode",
+  #             "ResultStatus" = "ResultStatusIdentifier",
+  #             "ResultComment" = "ResultCommentText",
+  #             "DetectionQuantitationLimit" = `DetectionQuantitationLimitMeasure/MeasureValue`,
+  #             "AnalyticalMethodName" = `ResultAnalyticalMethod/MethodName`,
+  #             "AnalyticalMethodID" = `ResultAnalyticalMethod/MethodIdentifier`
+  #           )
+  #         )
+  #       )
+  #   },
+  #   description = "WQP | Process Data | Chem"
+  # ),
+  # tar_target(
+  #   # This target creates the state-level nutrient data from NWIS
+  #   name = nutrient_data_join,
+  #   command = {
+  #     nutrient_physchem |>
+  #       left_join(
+  #         nutrient_stations,
+  #         by = c("SiteID" = "SiteID")
+  #       ) |>
+  #       mutate(
+  #         SampleDate = lubridate::ymd(SampleDate),
+  #         Latitude = as.numeric(Latitude),
+  #         Longitude = as.numeric(Longitude)
+  #       ) |>
+  #       select(
+  #         SiteID,
+  #         Org.x,
+  #         SiteName.x,
+  #         MonitorName.x,
+  #         SampleDate,
+  #         ChemName,
+  #         ChemValue,
+  #         ChemUnit,
+  #         SampleFraction,
+  #         DetectionCondition,
+  #         MeasureQualifier,
+  #         ResultStatus,
+  #         ResultComment,
+  #         DetectionQuantitationLimit,
+  #         WellDepth,
+  #         Latitude,
+  #         Longitude,
+  #         CoordReferenceSys,
+  #         AnalyticalMethodName,
+  #         AnalyticalMethodID
+  #       ) |>
+  #       rename(
+  #         SiteName = SiteName.x,
+  #         MonitorName = MonitorName.x,
+  #         Org = Org.x
+  #       )
+  #   },
+  #   description = "WQP | Join"
+  # ),
   tar_target(
-    # This target creates the state-level nutrient data from NWIS
-    name = nutrient_data_join,
-    command = {
-      nutrient_physchem |>
-        left_join(
-          nutrient_stations,
-          by = c("SiteID" = "SiteID")
-        ) |>
-        mutate(
-          SampleDate = lubridate::ymd(SampleDate),
-          Latitude = as.numeric(Latitude),
-          Longitude = as.numeric(Longitude)
-        ) |>
-        select(
-          SiteID,
-          Org.x,
-          SiteName.x,
-          MonitorName.x,
-          SampleDate,
-          ChemName,
-          ChemValue,
-          ChemUnit,
-          SampleFraction,
-          DetectionCondition,
-          MeasureQualifier,
-          ResultStatus,
-          ResultComment,
-          DetectionQuantitationLimit,
-          WellDepth,
-          Latitude,
-          Longitude,
-          CoordReferenceSys,
-          AnalyticalMethodName,
-          AnalyticalMethodID
-        ) |>
-        rename(
-          SiteName = SiteName.x,
-          MonitorName = MonitorName.x,
-          Org = Org.x
-        )
-    },
-    description = "WQP | Join"
-  ),
-
-  tar_target(
-    # this target modifies nutrient_data_join to add crs and state columns
-    name = se_stations_data,
-    command = get_se_stations_data(nutrient_data_join, CoordReferenceSys)
-  ),
-  tar_target(
-    # this target writes se_stations_data to a csv
-    name = se_stations_file,
-    command = {
-      write.csv(
-        se_stations_data,
-        file = "inst/tabs/se_stations_file.csv",
-        row.names = FALSE
-      )
-
-      "inst/tabs/se_stations_file.csv"
-    },
+    name = TADAProfile_file,
+    command = "inst/tabs/TADAProfile.csv",
     format = "file"
   ),
   tar_target(
-    name = all_nutrient_barchart,
-    command = barchart_all_nutrients(se_stations_data),
+    name = TADAProfile,
+    command = {
+      read_csv(
+        TADAProfile_file
+      )
+    }
+  ),
+  tar_target(
+    name = nutrient_locations,
+    command = get_nutrient_locations(TADAProfile)
+  ),
+  tar_target(
+    name = southeast,
+    command = get_states(c(
+      "Alabama",
+      "Georgia",
+      "North Carolina",
+      "South Carolina",
+      "Tennessee",
+      "Mississippi",
+      "Florida"
+    ))
+  ),
+  tar_target(
+    name = locations_map,
+    command = map_locations(nutrient_locations, southeast),
     format = "file"
   ),
   tar_target(
-    # this target filters se_stations_data to nutrient entries: nitrate, nitrite, orthophosphate, and ammonia and ammonium
-    name = filtered_station_nutrients,
-    command = filter_se_stations(se_stations_data)
-  ),
-  tar_target(
-    # this target maps nitrate, nitrite, orthophosphate, and ammonia and ammonium across the southeastern US
-    name = se_stations_map,
-    command = map_se_stations(filtered_station_nutrients),
+    name = nutrients_maps,
+    command = map_nutrients(nutrient_locations, southeast),
     format = "file"
   ),
   tar_target(
     # this target creates a stacked barchart for yearly nutrient sampling frequency by state
-    name = sampling_by_state_barchart,
-    command = barchart_sampling_by_state(filtered_station_nutrients),
+    name = state_nutrients_barchart,
+    command = barchart_nutrients_by_state(TADAProfile),
     format = "file"
   ),
   tar_target(
-    # this target creates a figure displaying four maps of the southeast highlighting sampling efforts for nitrate, nitrite, orthophosphate, and ammonia and ammonium
-    name = nutrient_sampling_maps,
-    command = map_nutrient_sampling(filtered_station_nutrients),
-    format = "file"
-  ),
-  tar_target(
-    # this target creates a table counting the various units in which each nutrient is measured
-    name = unit_data,
-    command = get_unit_data(se_stations_data)
-  ),
-  tar_target(
-    # this target establishes the nutrient units file
-    name = unit_data_file,
-    command = {
-      write.csv(
-        unit_data,
-        file = "inst/tabs/unit_distribution.csv",
-        row.names = FALSE
-      )
-
-      "inst/tabs/unit_distribution.csv"
-    },
-    format = "file"
-  ),
-  tar_target(
-    # this target creates a barchart for the number of samples analyzed using a certain analytical method by nutrient
-    name = analytical_method_barchart,
-    command = barchart_analytical_methods(filtered_station_nutrients),
-    format = "file"
-  ),
-  tar_target(
-    # this target creates a barchart for the number of samples reported using a certain unit by nutrient
-    name = nutrient_unit_barchart,
-    command = barchart_nutrient_units(filtered_station_nutrients),
-    format = "file"
+    name = nutrients_barchart,
+    command = barchart_nutrients(TADAProfile)
   )
   # tar_target(
   #   # This target gets the censoring aspects of the data

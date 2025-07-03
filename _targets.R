@@ -34,6 +34,7 @@ library(ggplot2)
 library(gt)
 library(webshot2)
 library(lubridate)
+library(tigris)
 sf::sf_use_s2(FALSE)
 terra::terraOptions(memfrac = 0.1)
 
@@ -120,7 +121,9 @@ tar_option_set(
     "lubridate",
     "psych",
     "crew",
-    "crew.cluster"
+    "crew.cluster",
+    "tigris",
+    "targets"
   ),
   format = "qs",
   controller = crew::crew_controller_group(

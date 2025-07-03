@@ -3,56 +3,15 @@
 
 ###---------------------------------------------------------------------------------------------------------
 
-map_se_stations <- function(data) {
-  sf_list <- data %>%
-    split(.$crs_epsg) %>%
-    imap(
-      ~ {
-        if (is.na(.y) || .y == "") {
-          warning("Skipping group with missing or unknown crs")
-          return(NULL)
-        }
-
-        st_as_sf(
-          .x,
-          coords = c("Longitude", "Latitude"),
-          crs = as.integer(.y),
-          remove = FALSE
-        )
-      }
-    ) %>%
-    compact() %>%
-    map(~ st_transform(.x, crs = 4269))
-
-  # combine the sf data to one object
-  stations <- bind_rows(sf_list)
-
-  se <- rnaturalearth::ne_states(
-    country = "United States of America",
-    returnclass = "sf"
-  ) %>%
-    filter(
-      name %in%
-        c(
-          "Alabama",
-          "Florida",
-          "Georgia",
-          "North Carolina",
-          "South Carolina",
-          "Mississippi",
-          "Tennessee"
-        )
-    ) %>%
-    st_transform(crs = 4269)
-
-  se_bbox <- st_bbox(se)
+map_locations <- function(sf_nutrients, sf_states) {
+  se_bbox <- st_bbox(sf_states)
 
   # create the map
-  se_stations_map <- ggplot() +
-    geom_sf(data = se, fill = "white", color = "black") +
+  locations_map <- ggplot() +
+    geom_sf(data = sf_states, fill = "white", color = "black") +
     geom_sf(
-      data = stations,
-      aes(color = ChemName),
+      data = sf_nutrients,
+      aes(color = nutrient),
       size = 0.5,
       alpha = 0.8
     ) +
@@ -64,31 +23,28 @@ map_se_stations <- function(data) {
     theme_minimal() +
     theme(legend.key.size = unit(0.5, "cm")) +
     labs(
-      title = "Nitrate, Nitrite, Orthophosphate, and Ammonia and Ammonium Sampled from WQP Stations across Southeastern United States"
+      title = "Clean Nutrient Data across Southeastern United States"
     )
 
   ggsave(
-    "inst/figs/se_stations_map.png",
-    plot = se_stations_map,
+    "inst/figs/locations_map.png",
+    plot = locations_map,
     width = 11,
     height = 8
   )
 
-  "inst/figs/se_stations_map.png"
+  "inst/figs/locations_map.png"
 }
 
 ###---------------------------------------------------------------------------------------------------------
 
-barchart_sampling_by_state <- function(data) {
-  data_sampling_years <- data %>%
-    mutate(year = year(SampleDate))
-
-  se_nutrients_barchart <- ggplot(
-    data_sampling_years,
-    aes(x = factor(year), fill = ChemName)
+barchart_nutrients_by_state <- function(data) {
+  state_nutrients_barchart <- ggplot(
+    data,
+    aes(x = sample_year, fill = nutrient)
   ) +
     geom_bar(position = "stack") +
-    facet_wrap(~state, scales = "free_x") +
+    facet_wrap(~state_code, scales = "free_x") +
     labs(
       title = "Yearly Nutrient Sampling Frequency by State",
       x = "Sample Year",
@@ -102,71 +58,30 @@ barchart_sampling_by_state <- function(data) {
     )
 
   ggsave(
-    "inst/figs/sampling_by_state_barchart.png",
-    plot = se_nutrients_barchart,
+    "inst/figs/state_nutrients_barchart.png",
+    plot = state_nutrients_barchart,
     width = 11,
     height = 8
   )
 
-  "inst/figs/sampling_by_state_barchart.png"
+  "inst/figs/state_nutrients_barchart.png"
 }
 
 ###---------------------------------------------------------------------------------------------------------
 
-map_nutrient_sampling <- function(data) {
-  sf_list <- data %>%
-    split(.$crs_epsg) %>%
-    imap(
-      ~ {
-        if (is.na(.y) || .y == "") {
-          warning("Skipping group with missing or unknown crs")
-          return(NULL)
-        }
-
-        st_as_sf(
-          .x,
-          coords = c("Longitude", "Latitude"),
-          crs = as.integer(.y),
-          remove = FALSE
-        )
-      }
-    ) %>%
-    compact() %>%
-    map(~ st_transform(.x, crs = 4269))
-
-  # combine the sf data to one object
-  stations <- bind_rows(sf_list)
-
-  se <- rnaturalearth::ne_states(
-    country = "United States of America",
-    returnclass = "sf"
-  ) %>%
-    filter(
-      name %in%
-        c(
-          "Alabama",
-          "Florida",
-          "Georgia",
-          "North Carolina",
-          "South Carolina",
-          "Mississippi",
-          "Tennessee"
-        )
-    ) %>%
-    st_transform(crs = 4269)
-
-  se_bbox <- st_bbox(se)
+map_nutrients <- function(nutrient_locations, southeast) {
+  se_bbox <- st_bbox(southeast)
 
   # create the map
-  nutrient_sampling_maps <- ggplot() +
-    geom_sf(data = se, fill = "white", color = "black") +
+  nutrients_maps <- ggplot() +
+    geom_sf(data = southeast, fill = "white", color = "black") +
     geom_sf(
-      data = stations,
-      aes(color = ChemName),
+      data = nutrient_locations,
+      aes(color = nutrient),
       size = 0.3,
       alpha = 0.2
     ) +
-    facet_wrap(~ChemName) +
+    facet_wrap(~nutrient) +
     coord_sf(
       crs = 4269,
       xlim = c(se_bbox["xmin"], se_bbox["xmax"]),
@@ -177,24 +92,21 @@ map_nutrient_sampling <- function(data) {
     labs(title = "Nutrients Sampled in Southeastern US")
 
   ggsave(
-    "inst/figs/nutrient_sampling_maps.png",
-    plot = nutrient_sampling_maps,
+    "inst/figs/nutrients_maps.png",
+    plot = nutrients_maps,
     width = 11,
     height = 8
   )
 
-  "inst/figs/nutrient_sampling_maps.png"
+  "inst/figs/nutrients_maps.png"
 }
 
 ###---------------------------------------------------------------------------------------------------------
 
-barchart_all_nutrients <- function(data) {
-  data_sampling_years <- data %>%
-    mutate(year = year(SampleDate))
-
-  all_nutrient_barchart <- ggplot(
-    data_sampling_years,
-    aes(x = factor(year), fill = ChemName)
+barchart_nutrients <- function(data) {
+  nutrients_barchart <- ggplot(
+    data,
+    aes(x = sample_year, fill = nutrient)
   ) +
     geom_bar(position = "stack") +
     labs(
@@ -211,69 +123,13 @@ barchart_all_nutrients <- function(data) {
     guides(fill = guide_legend(ncol = 1))
 
   ggsave(
-    "inst/figs/all_nutrient_barchart.png",
-    plot = all_nutrient_barchart,
+    "inst/figs/nutrients_barchart.png",
+    plot = nutrients_barchart,
     width = 11,
     height = 8
   )
 
-  "inst/figs/all_nutrient_barchart.png"
-}
-
-###---------------------------------------------------------------------------------------------------------
-
-barchart_analytical_methods <- function(data) {
-  analytical_method_barchart <- ggplot() +
-    geom_bar(
-      data = data,
-      mapping = aes(x = factor(AnalyticalMethodName))
-    ) +
-    facet_wrap(~ChemName, scales = "free_x") +
-    labs(
-      title = "Analytical Methods used to Measure Nutrient Concentrations",
-      x = "Analytical Method",
-      y = "Number of Samples",
-      fill = "Nutrient"
-    ) +
-    theme_minimal() +
-    theme(axis.text.x = element_text(angle = 75, hjust = 1))
-
-  ggsave(
-    "inst/figs/analytical_method_barchart.png",
-    plot = analytical_method_barchart,
-    width = 11,
-    height = 8
-  )
-
-  "inst/figs/analytical_method_barchart.png"
-}
-
-###---------------------------------------------------------------------------------------------------------
-
-barchart_nutrient_units <- function(data) {
-  nutrient_unit_barchart <- ggplot() +
-    geom_bar(
-      data = data,
-      mapping = aes(x = factor(ChemUnit))
-    ) +
-    facet_wrap(~ChemName, scales = "free_x") +
-    labs(
-      title = "Units used to Report Nutrient Concentrations",
-      x = "Nutrient Unit",
-      y = "Number of Samples",
-      fill = "Nutrient"
-    ) +
-    theme_minimal() +
-    theme(axis.text.x = element_text(angle = 75, hjust = 1))
-
-  ggsave(
-    "inst/figs/nutrient_unit_barchart.png",
-    plot = nutrient_unit_barchart,
-    width = 11,
-    height = 8
-  )
-
-  "inst/figs/nutrient_unit_barchart.png"
+  "inst/figs/nutrients_barchart.png"
 }
 
 ###---------------------------------------------------------------------------------------------------------
