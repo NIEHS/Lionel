@@ -136,6 +136,9 @@ targets_data <- list(
   #   },
   #   description = "WQP | Join"
   # ),
+
+  ### create core objects ---------------------------------------------------------------------------------------------------------
+
   tar_target(
     name = TADAProfile_file,
     command = "inst/tabs/TADAProfile.csv",
@@ -165,6 +168,9 @@ targets_data <- list(
       "Florida"
     ))
   ),
+
+  ### eda ---------------------------------------------------------------------------------------------------------
+
   tar_target(
     name = locations_map,
     command = map_locations(nutrient_locations, southeast),
@@ -184,7 +190,80 @@ targets_data <- list(
   tar_target(
     name = nutrients_barchart,
     command = barchart_nutrients(TADAProfile)
+  ),
+
+  ### nlcd ---------------------------------------------------------------------------------------------------------
+
+  tar_target(
+    nlcd_years,
+    c(1985, 1995, 2005, 2015)
+  ),
+  tar_target(
+    download_nlcd,
+    command = {
+      amadeus::download_nlcd(
+        product = "Land Cover",
+        year = nlcd_year,
+        directory_to_save = file.path(
+          "inst",
+          "data",
+          "rasters",
+          "nlcd",
+          as.character(nlcd_year)
+        ),
+        acknowledgement = TRUE,
+        download = TRUE,
+        hash = TRUE
+      )
+    },
+    pattern = map(nlcd_year = nlcd_years),
+    iteration = "vector"
+  ),
+  tar_target(
+    process_nlcd,
+    command = {
+      amadeus::process_nlcd(
+        path = download_nlcd,
+        year = nlcd_year,
+        extent = terra::ext(-91.00001, -74.99999, 23.99999, 36.99999)
+      )
+    },
+    pattern = map(download_nlcd, nlcd_year = nlcd_years),
+    iteration = "vector"
+  ),
+  tar_target(
+    calculate_nlcd,
+    command = {
+      amadeus::calculate_nlcd(
+        from = process_nlcd,
+        locs = southeast,
+        locs_id = "STATEFP",
+        mode = "exact",
+        radius = 1000,
+        max_cells = 5e+07
+      )
+    },
+    pattern = map(process_nlcd),
+    iteration = "vector"
   )
+
+  ### USGS data releases ---------------------------------------------------------------------------------------------------------
+
+  # tar_target(
+  #   sb_items,
+  #   list(
+  #     list(item_id = "6734c572d34e6fbce7b5c09a", file = "BG2021_SepticDensities.csv"), # septic system density at the block group level (data release: https://doi.org/10.5066/P1WCYDPB)
+  #     list(item_id = "631405c8d34e36012efa31ff", file = "MUKEY90m.zip"), # SSURGO variables by MUKEY (data release: https://doi.org/10.5066/P92JJ6UJ)
+  #     list(item_id = "5e43efc3e4b0edb47be84c3d", file = "domestic_grids.zip"), # domestic well depth (data release: https://doi.org/10.5066/P94640EM)
+  #     list(item_id = "631405ded34e36012efa3470", file = "Water_Divides.7z") # multi order hydrologic position (data release: https://doi.org/10.5066/P9HLU4YY)
+  #   )
+  # ),
+  # tar_target(
+  #   sciencebase_files,
+  #   get_sb_item(item),
+  #   pattern = map(item = sb_items),
+  #   iteration = "list"
+  # )
   # tar_target(
   #   # This target gets the censoring aspects of the data
   #   name = nutrient_censored_check,

@@ -1,0 +1,1 @@
+curl -o inst/data/rasters/nlcd/2005/Annual_NLCD_LndCov_2005_CU_C1V0.tif --url https://www.mrlc.gov/downloads/sciweb1/shared/mrlc/data-bundles/Annual_NLCD_LndCov_2005_CU_C1V0.tif
