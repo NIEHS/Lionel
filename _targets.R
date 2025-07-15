@@ -36,6 +36,9 @@ library(webshot2)
 library(lubridate)
 library(tigris)
 library(jsonlite)
+library(glue)
+library(sbtools)
+library(archive)
 sf::sf_use_s2(FALSE)
 terra::terraOptions(memfrac = 0.1)
 
@@ -125,7 +128,10 @@ tar_option_set(
     "crew.cluster",
     "tigris",
     "targets",
-    "jsonlite"
+    "jsonlite",
+    "glue",
+    "sbtools",
+    "archive"
   ),
   format = "qs",
   controller = crew::crew_controller_group(

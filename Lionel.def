@@ -17,6 +17,7 @@ From: rocker/geospatial:latest
         bash \
         coreutils \
         curl \
+        p7zip-full\
         gnupg \
         ca-certificates \
         cmake \
@@ -77,7 +78,7 @@ From: rocker/geospatial:latest
 
     # Install R packages
     Rscript -e "devtools::install_github('njtierney/geotargets')"
-    Rscript -e "install.packages(c('pak','tarchetypes','testthat','nhdplusTools','RhpcBLASctl', 'psych','crew','crew.cluster', 'remotes', 'tigris', 'jsonlite'))"
+    Rscript -e "install.packages(c('pak','tarchetypes','testthat','nhdplusTools','RhpcBLASctl', 'psych','crew','crew.cluster', 'remotes', 'tigris', 'jsonlite', 'glue', 'archive'))"
     Rscript -e "remotes::install_github('DOI-USGS/sbtools')"
     Rscript -e "pak::pkg_install(c('ropensci/chopin'))"
     Rscript -e "devtools::install_github('NIEHS/PrestoGP')"
@@ -94,6 +95,7 @@ From: rocker/geospatial:latest
     export LANG=en_US.UTF-8
     export LC_ALL=en_US.UTF-8
     export TERM=xterm-256color
+    export PATH="/usr/bin:$PATH"
 
 
 

@@ -1,141 +1,5 @@
 targets_data <- list(
-  # tar_target(
-  #   name = nutrient_stations,
-  #   command = {
-  #     # Define the directory containing your CSV files
-  #     station_files <- list.files(
-  #       path = "inst/input/raw_data/",
-  #       pattern = "station.csv$",
-  #       recursive = TRUE,
-  #       full.names = TRUE
-  #     )
-
-  #     # Read and bind all CSV files into one data frame
-  #     combined_df <- station_files |>
-  #       map_dfr(
-  #         ~ read_csv(
-  #           .x,
-  #           col_select = c(
-  #             "Org" = "OrganizationIdentifier",
-  #             "SiteID" = "MonitoringLocationIdentifier",
-  #             "SiteType" = "MonitoringLocationTypeName",
-  #             "SiteName" = "MonitoringLocationName",
-  #             "MonitorName" = "MonitoringLocationName",
-  #             "Latitude" = "LatitudeMeasure",
-  #             "Longitude" = "LongitudeMeasure",
-  #             "VerticalValue" = "VerticalMeasure/MeasureValue",
-  #             "WellDepth" = "WellDepthMeasure/MeasureValue",
-  #             "WellHole" = "WellHoleDepthMeasure/MeasureValue",
-  #             "ConstructionDate" = "ConstructionDateText",
-  #             "CoordReferenceSys" = "HorizontalCoordinateReferenceSystemDatumName"
-  #           )
-  #         )
-  #       )
-  #   },
-  #   description = "WQP | Process Data | Stations"
-  # ),
-  # tar_target(
-  #   name = nutrient_physchem,
-  #   command = {
-  #     # Define the directory containing your CSV files
-  #     physchem_files <- list.files(
-  #       path = "inst/input/raw_data/",
-  #       pattern = "resultphyschem.csv$",
-  #       recursive = TRUE,
-  #       full.names = TRUE
-  #     )
-
-  #     col_types_spec <- cols_only(
-  #       OrganizationIdentifier = col_character(),
-  #       MonitoringLocationIdentifier = col_character(),
-  #       MonitoringLocationTypeName = col_character(),
-  #       ActivityStartDate = col_character(),
-  #       MonitoringLocationName = col_character(),
-  #       ResultDetectionConditionText = col_character(),
-  #       ResultMeasureValue = col_double(),
-  #       `ResultMeasure/MeasureUnitCode` = col_character(),
-  #       CharacteristicName = col_character(),
-  #       ResultSampleFractionText = col_character(),
-  #       MeasureQualifierCode = col_character(),
-  #       ResultStatusIdentifier = col_character(),
-  #       ResultCommentText = col_character(),
-  #       `DetectionQuantitationLimitMeasure/MeasureValue` = col_double(),
-  #       `ResultAnalyticalMethod/MethodName` = col_character(),
-  #       `ResultAnalyticalMethod/MethodIdentifier` = col_character()
-  #     )
-
-  #     combined_df <- physchem_files |>
-  #       map_dfr(
-  #         ~ read_csv(
-  #           .x,
-  #           col_types = col_types_spec,
-  #           col_select = c(
-  #             "Org" = "OrganizationIdentifier",
-  #             "SiteID" = "MonitoringLocationIdentifier",
-  #             "SiteName" = "MonitoringLocationName",
-  #             "SampleDate" = "ActivityStartDate",
-  #             "MonitorName" = "MonitoringLocationName",
-  #             "ChemName" = "CharacteristicName",
-  #             "ChemValue" = "ResultMeasureValue",
-  #             "ChemUnit" = `ResultMeasure/MeasureUnitCode`,
-  #             "SampleFraction" = "ResultSampleFractionText",
-  #             "DetectionCondition" = "ResultDetectionConditionText",
-  #             "MeasureQualifier" = "MeasureQualifierCode",
-  #             "ResultStatus" = "ResultStatusIdentifier",
-  #             "ResultComment" = "ResultCommentText",
-  #             "DetectionQuantitationLimit" = `DetectionQuantitationLimitMeasure/MeasureValue`,
-  #             "AnalyticalMethodName" = `ResultAnalyticalMethod/MethodName`,
-  #             "AnalyticalMethodID" = `ResultAnalyticalMethod/MethodIdentifier`
-  #           )
-  #         )
-  #       )
-  #   },
-  #   description = "WQP | Process Data | Chem"
-  # ),
-  # tar_target(
-  #   # This target creates the state-level nutrient data from NWIS
-  #   name = nutrient_data_join,
-  #   command = {
-  #     nutrient_physchem |>
-  #       left_join(
-  #         nutrient_stations,
-  #         by = c("SiteID" = "SiteID")
-  #       ) |>
-  #       mutate(
-  #         SampleDate = lubridate::ymd(SampleDate),
-  #         Latitude = as.numeric(Latitude),
-  #         Longitude = as.numeric(Longitude)
-  #       ) |>
-  #       select(
-  #         SiteID,
-  #         Org.x,
-  #         SiteName.x,
-  #         MonitorName.x,
-  #         SampleDate,
-  #         ChemName,
-  #         ChemValue,
-  #         ChemUnit,
-  #         SampleFraction,
-  #         DetectionCondition,
-  #         MeasureQualifier,
-  #         ResultStatus,
-  #         ResultComment,
-  #         DetectionQuantitationLimit,
-  #         WellDepth,
-  #         Latitude,
-  #         Longitude,
-  #         CoordReferenceSys,
-  #         AnalyticalMethodName,
-  #         AnalyticalMethodID
-  #       ) |>
-  #       rename(
-  #         SiteName = SiteName.x,
-  #         MonitorName = MonitorName.x,
-  #         Org = Org.x
-  #       )
-  #   },
-  #   description = "WQP | Join"
-  # ),
+  # targets
 
   ### create core objects ---------------------------------------------------------------------------------------------------------
 
@@ -168,6 +32,38 @@ targets_data <- list(
       "Florida"
     ))
   ),
+  tar_target(
+    # this target creates a 1km spaced dot grid for the southeast
+    southeast_grid,
+    {
+      # project southeast to NAD83 / Conus Albers
+      southeast_proj <- st_transform(southeast, 5070)
+
+      grid <- st_make_grid(
+        southeast_proj,
+        cellsize = 1000,
+        what = "centers",
+        square = TRUE
+      )
+
+      point_grid <- st_sf(geometry = grid) %>%
+        st_intersection(southeast_proj)
+
+      st_transform(point_grid, st_crs(southeast))
+
+      point_grid_image <- ggplot(point_grid) +
+        geom_sf(southeast, col = "white", border = "black")
+
+      ggsave(
+        "inst/figs/dot_grid.png",
+        plot = point_grid_image,
+        width = 11,
+        height = 8
+      )
+      "inst/figs/dot_grid.png"
+    },
+    format = "file"
+  ),
 
   ### eda ---------------------------------------------------------------------------------------------------------
 
@@ -194,135 +90,221 @@ targets_data <- list(
 
   ### nlcd ---------------------------------------------------------------------------------------------------------
 
-  tar_target(
-    nlcd_years,
-    c(1985, 1995, 2005, 2015)
-  ),
-  tar_target(
-    download_nlcd,
-    command = {
-      amadeus::download_nlcd(
-        product = "Land Cover",
-        year = nlcd_year,
-        directory_to_save = file.path(
-          "inst",
-          "data",
-          "rasters",
-          "nlcd",
-          as.character(nlcd_year)
-        ),
-        acknowledgement = TRUE,
-        download = TRUE,
-        hash = TRUE
-      )
-    },
-    pattern = map(nlcd_year = nlcd_years),
-    iteration = "vector"
-  ),
-  tar_target(
-    process_nlcd,
-    command = {
-      amadeus::process_nlcd(
-        path = download_nlcd,
-        year = nlcd_year,
-        extent = terra::ext(-91.00001, -74.99999, 23.99999, 36.99999)
-      )
-    },
-    pattern = map(download_nlcd, nlcd_year = nlcd_years),
-    iteration = "vector"
-  ),
-  tar_target(
-    calculate_nlcd,
-    command = {
-      amadeus::calculate_nlcd(
-        from = process_nlcd,
-        locs = southeast,
-        locs_id = "STATEFP",
-        mode = "exact",
-        radius = 1000,
-        max_cells = 5e+07
-      )
-    },
-    pattern = map(process_nlcd),
-    iteration = "vector"
-  )
-
-  ### USGS data releases ---------------------------------------------------------------------------------------------------------
-
   # tar_target(
-  #   sb_items,
-  #   list(
-  #     list(item_id = "6734c572d34e6fbce7b5c09a", file = "BG2021_SepticDensities.csv"), # septic system density at the block group level (data release: https://doi.org/10.5066/P1WCYDPB)
-  #     list(item_id = "631405c8d34e36012efa31ff", file = "MUKEY90m.zip"), # SSURGO variables by MUKEY (data release: https://doi.org/10.5066/P92JJ6UJ)
-  #     list(item_id = "5e43efc3e4b0edb47be84c3d", file = "domestic_grids.zip"), # domestic well depth (data release: https://doi.org/10.5066/P94640EM)
-  #     list(item_id = "631405ded34e36012efa3470", file = "Water_Divides.7z") # multi order hydrologic position (data release: https://doi.org/10.5066/P9HLU4YY)
-  #   )
-  # ),
-  # tar_target(
-  #   sciencebase_files,
-  #   get_sb_item(item),
-  #   pattern = map(item = sb_items),
+  #   nlcd_years,
+  #   list(1985, 1995, 2005, 2015),
   #   iteration = "list"
-  # )
-  # tar_target(
-  #   # This target gets the censoring aspects of the data
-  #   name = nutrient_censored_check,
-  #   command = get_censored_data(nutrient_data_join),
-  #   pattern = map(nutrient_data_join),
-  #   iteration = "list",
-  #   description = "NWIS | Censored Data"
   # ),
-
   # tar_target(
-  #   # This target gets the daily averages
-  #   name = nutrient_daily_check,
-  #   command = get_daily_averages(nutrient_censored_check),
-  #   pattern = map(nutrient_censored_check),
-  #   iteration = "list",
-  #   description = "NWIS | Daily Averages"
-  # ),
-
-  # tar_target(
-  #   # This target gets the yearly averages
-  #   name = nutrient_yearly_check,
-  #   command = get_yearly_averages(nutrient_daily_check),
-  #   pattern = map(nutrient_daily_check),
-  #   iteration = "list",
-  #   description = "NWIS | Yearly Averages"
-  # ),
-
-  # tar_target(
-  #   # filter concentrations with vals <= 0
-  #   name = nutrient_filtered_check,
-  #   command = filter_bad_rows(nutrient_yearly_check),
-  #   pattern = map(nutrient_yearly_check),
-  #   iteration = "list",
-  #   description = "NWIS | Filtered Yearly"
-  # ),
-
-  # tar_target(
-  #   # combine check
-  #   name = nutrient_combined_check,
-  #   command = combine_state_data(nutrient_filtered_check),
-  #   description = "NWIS | Combined State Data"
-  # ),
-
-  # tar_target(
-  #   # nutrient group summaries
-  #   name = nutrient_summary_check,
-  #   command = group_summaries(nutrient_combined_check, parm_cd),
-  #   description = "NWIS | Group Summaries"
-  # ),
-
-  # tar_target(
-  #   # Filter by sample size
-  #   name = nutrient_sample_size_check,
+  #   get_nlcd,
   #   command = {
-  #     nutrient_summary_check |>
-  #       group_by(characteristicname) |>
-  #       summarise(num = sum(num), bd = mean(bd)) |>
-  #       filter(num > 2000, bd < 100)
+  #     download_dir <- "inst/data/nlcd"
+
+  #     if (!dir.exists(download_dir)) {
+  #       dir.create(download_dir, recursive = TRUE)
+  #     }
+
+  #     amadeus::download_nlcd(
+  #       product = "Land Cover",
+  #       year = nlcd_years,
+  #       directory_to_save = download_dir,
+  #       acknowledgement = TRUE,
+  #       download = TRUE,
+  #       hash = TRUE
+  #     )
+  #     TRUE
   #   },
-  #   description = "NWIS | Filter by Sample Size"
+  #   pattern = map(nlcd_years),
+  # ),
+  # tar_target(
+  #   process_nlcd,
+  #   command = {
+  #     download_nlcd
+  #     amadeus::process_nlcd(
+  #       path = file.path(
+  #         "inst",
+  #         "data",
+  #         "rasters",
+  #         "nlcd"
+  #       ),
+  #       year = nlcd_years,
+  #       extent = terra::ext(-91.00001, -74.99999, 23.99999, 36.99999)
+  #     )
+  #   },
+  #   pattern = map(nlcd_years)
+  # ),
+  # tar_target(
+  #   calculate_nlcd,
+  #   command = {
+  #     process_nlcd
+  #     amadeus::calculate_nlcd(
+  #       from = process_nlcd,
+  #       locs = southeast,
+  #       locs_id = "STATEFP",
+  #       mode = "exact",
+  #       radius = 1000,
+  #       max_cells = 5e+07
+  #     )
+  #   },
+  #   pattern = map(process_nlcd)
   # )
+
+  ### ssurgo ---------------------------------------------------------------------------------------------------------
+
+  tar_target(
+    ssurgo_files,
+    c(
+      "DrainageClass.zip",
+      "HydGrp.zip",
+      "Layer.zip",
+      "Text.zip",
+      "WtDep.zip"
+    ),
+    iteration = "list"
+  ),
+  tar_target(
+    get_ssurgo,
+    {
+      item_id <- "631405c8d34e36012efa31ff"
+      download_dir <- "inst/data/ssurgo/zips"
+      dest_file <- file.path(download_dir, ssurgo_files)
+
+      if (!dir.exists(download_dir)) {
+        dir.create(download_dir, recursive = TRUE)
+      }
+
+      sbtools::item_file_download(
+        sb_id = item_id,
+        names = ssurgo_files,
+        destinations = dest_file,
+        overwrite_file = TRUE
+      )
+      dest_file
+    },
+    pattern = map(ssurgo_files),
+    format = "file"
+  ),
+  tar_target(
+    unzip_ssurgo,
+    {
+      zip_basename <- basename(get_ssurgo)
+      zip_name_no_ext <- sub("\\.[^.]*$", "", zip_basename)
+      extract_dir <- file.path("inst/data/ssurgo", zip_name_no_ext)
+
+      if (!dir.exists(extract_dir)) {
+        dir.create(extract_dir, recursive = TRUE)
+      }
+
+      unzip(get_ssurgo, exdir = extract_dir)
+      extract_dir
+    },
+    pattern = map(get_ssurgo),
+    format = "file"
+  ),
+
+  ### mohp ----------------------------------------------------------------------------------------------------------
+
+  # tar_target(
+  #   mohp_files,
+  #   c(
+  #     "Order9_DSD_LP_90m.gdb.7z",
+  #     "Order8_DSD_LP_90m.gdb.7z",
+  #     "Order7_DSD_LP_90m.gdb.7z",
+  #     "Order6_DSD_LP_90m.gdb.7z",
+  #     "Order5_DSD_LP_90m.gdb.7z",
+  #     "Order4_DSD_LP_90m.gdb.7z",
+  #     "Order3_DSD_LP_90m.gdb.7z",
+  #     "Order2_DSD_LP_90m.gdb.7z",
+  #     "Order1_DSD_LP_90m.gdb.7z"
+  #   ),
+  #   iteration = "list"
+  # ),
+  # tar_target(
+  #   get_mohp,
+  #   {
+  #     item_id <- "5b4e34dfe4b06a6dd180272e"
+  #     download_dir <- "inst/data/mohp/zips"
+  #     dest_file <- file.path(download_dir, mohp_files)
+
+  #     if (!dir.exists(download_dir)) {
+  #       dir.create(download_dir, recursive = TRUE)
+  #     }
+
+  #     tryCatch(
+  #       {
+  #         sbtools::item_file_download(
+  #           sb_id = item_id,
+  #           names = mohp_files,
+  #           destinations = dest_file,
+  #           overwrite_file = TRUE
+  #         )
+  #       },
+  #       error = function(e) {
+  #         stop("Failed to download ", mohp_files, ": ", e$message)
+  #       }
+  #     )
+
+  #     if (!file.exists(dest_file) || file.info(dest_file)$size < 1000) {
+  #       stop("Downloaded file appears corrupted or too small: ", dest_file)
+  #     }
+  #     dest_file
+  #   },
+  #   pattern = map(mohp_files),
+  #   format = "file"
+  # ),
+  # tar_target(
+  #   unzip_mohp,
+  #   {
+  #     zip_basename <- basename(get_mohp)
+  #     zip_name_no_ext <- sub("\\.[^.]*$", "", zip_basename)
+  #     extract_dir <- file.path("inst/data/mohp", zip_name_no_ext)
+
+  #     if (!dir.exists(extract_dir)) {
+  #       dir.create(extract_dir, recursive = TRUE)
+  #     }
+
+  #     tryCatch(
+  #       {
+  #         archive::archive(get_mohp) # Will throw if corrupt
+  #         archive::archive_extract(get_mohp, dir = extract_dir)
+  #       },
+  #       error = function(e) {
+  #         stop("Failed to extract ", get_mohp, ": ", e$message)
+  #       }
+  #     )
+  #     extract_dir
+  #   },
+  #   pattern = map(get_mohp),
+  #   format = "file"
+  # ),
+
+  ### soil_comp ----------------------------------------------------------------------------------------------------------
+
+  tar_target(
+    soil_comp_files,
+    c(
+      "Appendix_2b_Top5_18Sept2013.txt",
+      "Appendix_4b_Chorizon_18Sept2013.txt"
+    ),
+    iteration = "list"
+  ),
+  tar_target(
+    get_soil_comp,
+    {
+      base_url <- "https://pubs.usgs.gov/ds/801/downloads/"
+      download_dir <- "inst/data/soil_comp"
+
+      if (!dir.exists(download_dir)) {
+        dir.create(download_dir, recursive = TRUE)
+      }
+
+      file_url <- paste0(base_url, soil_comp_files)
+      dest_file <- file.path(download_dir, soil_comp_files)
+
+      download.file(file_url, dest_file, mode = "wb")
+      dest_file
+    },
+    pattern = map(soil_comp_files),
+    format = "file"
+  )
 )
