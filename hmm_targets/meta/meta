@@ -1,92 +1,31 @@
 name|type|data|command|depend|seed|path|time|size|bytes|format|repository|iteration|parent|children|seconds|warnings|error
-mohp_files|stem|c45bec70334ded3d|74f874b566b2e6f4|2c530c1562a7fbd1|601559241||t20284.7656662922s|s129b|129|qs|local|list||mohp_files_acab144433b6d5c9*mohp_files_f0695584d809c20e*mohp_files_e465d3fadcfb3d42*mohp_files_a33e94cd2121e3b2*mohp_files_ee5db556bd2f0bb3*mohp_files_61927e9b91fa1bc2*mohp_files_ebebca881baa1b9f*mohp_files_2eb71087e14fb43e*mohp_files_276b2d1adcc8969f|7.414||
-TADAProfile_file|stem|0dbf4f03a2e424b9|30487ce850e0a960|2c530c1562a7fbd1|268268513|inst/tabs/TADAProfile.csv|t20272.65831212s|s9000542b|9000542|file|local|vector|||7.424||
-ssurgo_files|stem|55b8f0fef4b3bbc1|fcc0a694fbd777d4|2c530c1562a7fbd1|-557084000||t20284.7656676221s|s133b|133|qs|local|list||ssurgo_files_38579542619378b6*ssurgo_files_1eaab3c979354918*ssurgo_files_c27d98e1613ac8aa*ssurgo_files_02e24245746558da*ssurgo_files_c57a8769f4053baa|7.343||
-southeast|stem|8ef9f038705f7ce6|c3fd39d3e27f7abe|19aed47b0da0e929|1551420958||t20284.7656673228s|s375932b|375932|qs|local|vector|||7.414||
-TADAProfile|stem|17f48413d924a3b9|4129a9aaa258193e|c9993b3f61517723|1655269294||t20284.765837188s|s502880b|502880|qs|local|vector|||5.74||
-get_ssurgo_29c11fe3a2ea3f68|branch|23857867a5a705de|3f9094522025ec4c|2c530c1562a7fbd1|-1392886935|inst/data/ssurgo/zips/HydGrp.zip|t20284.7658487396s|s3408244b|3408244|file|local|vector|get_ssurgo||6.532||
-nutrient_locations|stem|82334b049b71fe80|932606c65dd635e3|dbf5ecd4a55c2795|-2064403038||t20284.7658503197s|s564013b|564013|qs|local|vector|||0.019||
-nutrients_barchart|stem|19bf3b92d52c535e|96efd1d9e5e55563|2f4bd225388add36|-1603757099||t20284.7658519867s|s108b|108|qs|local|vector|||1.193||
-get_ssurgo_33855963c2a55b16|branch|515125e47c882ec8|3f9094522025ec4c|2c530c1562a7fbd1|-488065276|inst/data/ssurgo/zips/WtDep.zip|t20284.7658535551s|s2606449b|2606449|file|local|vector|get_ssurgo||1.647||
-unzip_ssurgo_42c8eb37388be19c|branch|fa8b62cb713ccd57|b9bea7ad15533e9a|ad9df233c10775f0|941906284|inst/data/ssurgo/HydGrp|t20284.7658535243s|s51308066b|51308066|file|local|vector|unzip_ssurgo||0.123||
-unzip_ssurgo_593085b0057739a1|branch|6d3ab5ad13f785aa|b9bea7ad15533e9a|dd62f42506b65a6d|743814389|inst/data/ssurgo/WtDep|t20284.7658552117s|s47155906b|47155906|file|local|vector|unzip_ssurgo||0.102||
-state_nutrients_barchart|stem|f297a9d6cea0408d|04b0a26b9bc27469|b49193056eba5e12|-1663568364|inst/figs/state_nutrients_barchart.png|t20284.7658602746s|s224847b|224847|file|local|vector|||0.807||
-get_ssurgo_dbaa597ca1dde509|branch|f82f3910e00207c1|3f9094522025ec4c|2c530c1562a7fbd1|1389158219|inst/data/ssurgo/zips/Layer.zip|t20284.7658663901s|s18461848b|18461848|file|local|vector|get_ssurgo||8.346||
-get_ssurgo_9d7a42ddacf15e49|branch|40eb4e05ddc86a82|3f9094522025ec4c|2c530c1562a7fbd1|978499771|inst/data/ssurgo/zips/Text.zip|t20284.7658710951s|s6740197b|6740197|file|local|vector|get_ssurgo||3.099||
-unzip_ssurgo_b7e8973de15dc2f4|branch|012412a578d3b1fa|b9bea7ad15533e9a|647e922a1f15e65d|663430292|inst/data/ssurgo/Layer|t20284.7658708243s|s88083618b|88083618|file|local|vector|unzip_ssurgo||0.339||
-unzip_ssurgo_e440d7c44cea4f4a|branch|91e10f9ab90eb57e|b9bea7ad15533e9a|3163ab5e70b9c7d5|-780524735|inst/data/ssurgo/Text|t20284.7658729379s|s37368834b|37368834|file|local|vector|unzip_ssurgo||0.128||
-get_ssurgo_2a5a783cbfedba28|branch|f517b2e5c24b57be|3f9094522025ec4c|2c530c1562a7fbd1|-1446564626|inst/data/ssurgo/zips/DrainageClass.zip|t20284.765874333s|s3618339b|3618339|file|local|vector|get_ssurgo||3.393||
-get_ssurgo|pattern|aa134a2c702aadd1|3f9094522025ec4c||657631380||||34835077|file|local|vector||get_ssurgo_2a5a783cbfedba28*get_ssurgo_29c11fe3a2ea3f68*get_ssurgo_dbaa597ca1dde509*get_ssurgo_9d7a42ddacf15e49*get_ssurgo_33855963c2a55b16|23.017||
-unzip_ssurgo_5f9e980409478043|branch|711bb91349c31a31|b9bea7ad15533e9a|feab7ece54da311b|667788359|inst/data/ssurgo/DrainageClass|t20284.7658767901s|s76813666b|76813666|file|local|vector|unzip_ssurgo||0.151||
-unzip_ssurgo|pattern|40bc7453ada288a2|b9bea7ad15533e9a||-611084575||||300730090|file|local|vector||unzip_ssurgo_5f9e980409478043*unzip_ssurgo_42c8eb37388be19c*unzip_ssurgo_b7e8973de15dc2f4*unzip_ssurgo_e440d7c44cea4f4a*unzip_ssurgo_593085b0057739a1|0.843||
-nutrients_maps|stem|6d7fb2090411dec8|00b4401c419aa83d|d0371fa4c4fa067d|-326302804|inst/figs/nutrients_maps.png|t20284.765968s|s1280127b|1280127|file|local|vector|||2.177||
-get_mohp_5151c67a63c03f83|branch|a98ef697a1d53197|b7b51d44b74f3bf1|2c530c1562a7fbd1|-923874396|inst/data/mohp/zips/Order9_DSD_LP_90m.gdb.7z|t20284.7666711451s|s1110560284b|1110560284|file|local|vector|get_mohp||86.115||
-get_mohp_6e6f6af0103096e6|branch|94ea70a7c9f3668d|b7b51d44b74f3bf1|2c530c1562a7fbd1|-629717701|inst/data/mohp/zips/Order8_DSD_LP_90m.gdb.7z|t20284.7670978943s|s1340919422b|1340919422|file|local|vector|get_mohp||122.992||
-get_mohp_abc8194c721bcc48|branch|27a9035f6098a316|b7b51d44b74f3bf1|2c530c1562a7fbd1|-814772303|inst/data/mohp/zips/Order7_DSD_LP_90m.gdb.7z|t20284.7672161543s|s1821210833b|1821210833|file|local|vector|get_mohp||133.169||
-get_mohp_afe73f99220623ae|branch|d1de3656038b2853|b7b51d44b74f3bf1|2c530c1562a7fbd1|875537826|inst/data/mohp/zips/Order6_DSD_LP_90m.gdb.7z|t20284.7685055599s|s2359748119b|2359748119|file|local|vector|get_mohp||244.598||
-get_mohp_89721e5242329abf|branch|0571c513bbaf62c1|b7b51d44b74f3bf1|2c530c1562a7fbd1|938075873|inst/data/mohp/zips/Order5_DSD_LP_90m.gdb.7z|t20284.768598784s|s2901436807b|2901436807|file|local|vector|get_mohp||244.644||
-get_mohp_652a964ff465bdc9|branch|152ce06e54e49ae6|b7b51d44b74f3bf1|2c530c1562a7fbd1|520047065|inst/data/mohp/zips/Order2_DSD_LP_90m.gdb.7z|t20284.7689924365s|s3800836216b|3800836216|file|local|vector|get_mohp||278.554||
-get_mohp_3c5040c1cff3e4d7|branch|da326254368729b3|b7b51d44b74f3bf1|2c530c1562a7fbd1|-323249065|inst/data/mohp/zips/Order4_DSD_LP_90m.gdb.7z|t20284.7691330338s|s3296398108b|3296398108|file|local|vector|get_mohp||290.289||
-get_mohp_25e5a79e11e19c99|branch|0d5213ac51cd56ad|b7b51d44b74f3bf1|2c530c1562a7fbd1|1885959355|inst/data/mohp/zips/Order1_DSD_LP_90m.gdb.7z|t20284.7692492526s|s3875205543b|3875205543|file|local|vector|get_mohp||300.65||
-get_mohp_a186398f8d5e9904|branch|937de7d290958e6e|b7b51d44b74f3bf1|2c530c1562a7fbd1|-1397340982|inst/data/mohp/zips/Order3_DSD_LP_90m.gdb.7z|t20284.769344587s|s3580650575b|3580650575|file|local|vector|get_mohp||308.88||
-get_mohp|pattern|821d58d24ba9adec|b7b51d44b74f3bf1||-1014718151||||24086965907|file|local|vector||get_mohp_5151c67a63c03f83*get_mohp_6e6f6af0103096e6*get_mohp_abc8194c721bcc48*get_mohp_afe73f99220623ae*get_mohp_89721e5242329abf*get_mohp_3c5040c1cff3e4d7*get_mohp_a186398f8d5e9904*get_mohp_652a964ff465bdc9*get_mohp_25e5a79e11e19c99|2009.891||
-unzip_mohp_12a7daa271470af6|branch||ac385004ad5d8661|bfdd3ade58003e91|1712706669||t20284.7710423367s||0|file|local|vector|unzip_mohp||0.009||Failed to extract inst/data/mohp/zips/Order5_DSD_LP_90m.gdb.7z: archive_extract.cpp:171 archive_read_next_header(): Truncated 7-Zip file body
-unzip_mohp_1f8958f016fea6c2|branch||ac385004ad5d8661|0fcab911a3d89de3|-966634962||t20284.7710437688s||0|file|local|vector|unzip_mohp||0.009||Failed to extract inst/data/mohp/zips/Order4_DSD_LP_90m.gdb.7z: archive_extract.cpp:171 archive_read_next_header(): Truncated 7-Zip file body
-unzip_mohp_61454a8f4d5310a2|branch||ac385004ad5d8661|228e721b18bce791|-1932275818||t20284.7710453319s||0|file|local|vector|unzip_mohp||0.009||Failed to extract inst/data/mohp/zips/Order6_DSD_LP_90m.gdb.7z: archive_extract.cpp:171 archive_read_next_header(): Truncated 7-Zip file body
-unzip_mohp_dfd7c65537dedc59|branch||ac385004ad5d8661|e98ac85bbf4cb0b4|70382651||t20284.7710463059s||0|file|local|vector|unzip_mohp||0.008||Failed to extract inst/data/mohp/zips/Order3_DSD_LP_90m.gdb.7z: archive_extract.cpp:171 archive_read_next_header(): Truncated 7-Zip file body
-unzip_mohp_8fcd1061e7d80a34|branch||ac385004ad5d8661|587e157053915694|76965463||t20284.7710471101s||0|file|local|vector|unzip_mohp||0.009||Failed to extract inst/data/mohp/zips/Order2_DSD_LP_90m.gdb.7z: archive_extract.cpp:171 archive_read_next_header(): Truncated 7-Zip file body
-unzip_mohp_681f18ecd111186e|branch||ac385004ad5d8661|efcbc521d45564c5|-1857738791||t20284.7710483412s||0|file|local|vector|unzip_mohp||0.009||Failed to extract inst/data/mohp/zips/Order1_DSD_LP_90m.gdb.7z: archive_extract.cpp:171 archive_read_next_header(): Truncated 7-Zip file body
-unzip_mohp_ceda1aae0fadf0d1|branch|4aff40099cd41900|ac385004ad5d8661|2936ff1ddf77de87|-1058881761|inst/data/mohp/Order9_DSD_LP_90m.gdb|t17795.868465845s|s1516198244b|1516198244|file|local|vector|unzip_mohp||57.676||
-unzip_mohp_269990f09637e1f5|branch|b8b97093ba11f9f8|ac385004ad5d8661|b75737c40643b782|907156702|inst/data/mohp/Order8_DSD_LP_90m.gdb|t17795.8684473989s|s1587925834b|1587925834|file|local|vector|unzip_mohp||69.319||
-unzip_mohp_5912c0e396f0e77f|branch|4eceb4e9e23c01e8|ac385004ad5d8661|e846eefdb8da7d84|149170983|inst/data/mohp/Order7_DSD_LP_90m.gdb|t17795.868434197s|s2056433115b|2056433115|file|local|vector|unzip_mohp||92.153||
-unzip_mohp|pattern|6f29ee92099ec233|ac385004ad5d8661||-1136848826||||5160557193|file|local|vector||unzip_mohp_ceda1aae0fadf0d1*unzip_mohp_269990f09637e1f5*unzip_mohp_5912c0e396f0e77f*unzip_mohp_61454a8f4d5310a2*unzip_mohp_12a7daa271470af6*unzip_mohp_1f8958f016fea6c2*unzip_mohp_dfd7c65537dedc59*unzip_mohp_8fcd1061e7d80a34*unzip_mohp_681f18ecd111186e|219.201||
-soil_comp_files|stem|5471afdcec793358|48dbdac6b6b31bfd|2c530c1562a7fbd1|1662281673||t20284.7871153594s|s127b|127|qs|local|list||soil_comp_files_3c21c06d06b96f1c*soil_comp_files_8497d026e485316d|7.588||
-get_soil_comp_5680c7d3e134d6d2|branch|0db59c5649796276|fecdd6d71b15a7ec|2c530c1562a7fbd1|824212797|inst/data/soil_comp/Appendix_2b_Top5_18Sept2013.txt|t20284.7894668751s|s1450062b|1450062|file|local|vector|get_soil_comp||1.27||
-get_soil_comp_abf87172abd4b411|branch|a29034021e58bf82|fecdd6d71b15a7ec|2c530c1562a7fbd1|-390580422|inst/data/soil_comp/Appendix_4b_Chorizon_18Sept2013.txt|t20284.7894813754s|s1996147b|1996147|file|local|vector|get_soil_comp||1.508||
-get_soil_comp|pattern|2ea8d76157617979|fecdd6d71b15a7ec||-673631083||||3446209|file|local|vector||get_soil_comp_5680c7d3e134d6d2*get_soil_comp_abf87172abd4b411|2.778||
-locations_map|stem|c1be1de7ef05f4e1|62dea046fcf229d6|8d50a8743439066b|-102702205|inst/figs/locations_map.png|t20284.8001810392s|s761480b|761480|file|local|vector|||1.709||
-southeast_grid|stem|056161a96378f04f|36da807d34655252|5aa52eb899c855fc|-1771098072||t20284.8085733245s|s11489311b|11489311|qs|local|vector|||306.797|attribute variables are assumed to be spatially constant throughout all geometries|
 scriptlines_targetdir|object|1bb3d2ba1c60f9f7
-get_states|function|b9ae91c0438f0b5a
-controller_gpu|object|f3d179a3f69f724a
+controller_gpu|object|456690fcf7590ec1
 cpus_per_task|object|73b794877cd9a999
 default_controller|object|44fe2d5e8bc2550e
 retry|function|0863d8224d0c242d
 scriptlines_basedir|object|d29e522512acb580
-map_locations|function|8e2a1867f04630f6
-.Random.seed|object|81b35bb2c4a025d3
-get_nutrient_locations|function|7b0821e08185bde8
+map_locations|function|0129628a23cf1303
+.Random.seed|object|e5b3359f48bc2e9f
 scriptlines_container|object|4a8e071f976a7cd7
-get_sb_file_urls|function|3bb07b88ea407a5f
 my_R|function|ead1d70d19aaccf7
 scriptlines_apptainer|object|3c10e0bbd29dd6e1
 scriptlines_inputdir|object|9cc1773898cc0766
-map_nutrients|function|522aabdeaf3234c5
-barchart_nutrients|function|c51a4289b2967b85
+map_nutrients|function|095aff35a33a3d21
+barchart_nutrients|function|34d11138f9c11764
 scriptlines_gpu|object|42b91c986ff2e3a5
-barchart_nutrients_by_state|function|416dc8e103eba107
+barchart_nutrients_by_state|function|9c99b396213fece4
 pull_data_safely|function|0f06c7d9f20e459a
 get_nutrient_data|function|726ebb2a5424b157
 get_pesticide_data|function|b80816d76f966ece
-scriptlines_targetdir|object|1bb3d2ba1c60f9f7
-get_states|function|b9ae91c0438f0b5a
-controller_gpu|object|08f2e62347bd275b
-cpus_per_task|object|73b794877cd9a999
-default_controller|object|44fe2d5e8bc2550e
-retry|function|0863d8224d0c242d
-scriptlines_basedir|object|d29e522512acb580
-map_locations|function|8e2a1867f04630f6
-.Random.seed|object|49561003b344f8c7
-get_nutrient_locations|function|7b0821e08185bde8
-scriptlines_container|object|4a8e071f976a7cd7
-get_sb_file_urls|function|3bb07b88ea407a5f
-my_R|function|ead1d70d19aaccf7
-scriptlines_apptainer|object|3c10e0bbd29dd6e1
-scriptlines_inputdir|object|9cc1773898cc0766
-map_nutrients|function|522aabdeaf3234c5
-barchart_nutrients|function|c51a4289b2967b85
-scriptlines_gpu|object|42b91c986ff2e3a5
-barchart_nutrients_by_state|function|416dc8e103eba107
-pull_data_safely|function|0f06c7d9f20e459a
-get_nutrient_data|function|726ebb2a5424b157
-get_pesticide_data|function|b80816d76f966ece
+TADAProfile_file|stem|0dbf4f03a2e424b9|30487ce850e0a960|2c530c1562a7fbd1|268268513|inst/tabs/TADAProfile.csv|t20272.65831212s|s9000542b|9000542|file|local|vector|||5.431||
+nlcd_years|stem|0e4c5b3dd91322d6|a44d46054600c001|2c530c1562a7fbd1|841804652||t20291.6468585009s|s88b|88|qs|local|list||nlcd_years_c57031b4c03f3543*nlcd_years_49802938573b3454*nlcd_years_d5ecf0bb33dfbcbe*nlcd_years_71d428f5b56cfa9f|5.951||
+TADAProfile|stem|17f48413d924a3b9|4129a9aaa258193e|c9993b3f61517723|1655269294||t20291.6468620505s|s502880b|502880|qs|local|vector|||0.701||
+get_nlcd_bf395c2f3280f395|branch|45a3348a853ec1be|6357cc330f89601b|2c530c1562a7fbd1|-1105928186||t20291.6468627032s|s72b|72|qs|local|vector|get_nlcd||0.045|running command '. inst/data/nlcd/nlcd_lndcov_1995_2025-07-22_curl_command.txt' had status 77 and error message 'Function not implemented'|
+get_nlcd_4d67c64802c83a84|branch|45a3348a853ec1be|6357cc330f89601b|2c530c1562a7fbd1|544756401||t20291.6468635651s|s72b|72|qs|local|vector|get_nlcd||0.309|running command '. inst/data/nlcd/nlcd_lndcov_1985_2025-07-22_curl_command.txt' had status 77 and error message 'Function not implemented'|
+get_nlcd_6acc6c7a545ac4be|branch|45a3348a853ec1be|6357cc330f89601b|2c530c1562a7fbd1|1614110431||t20291.6468636648s|s72b|72|qs|local|vector|get_nlcd||0.067|running command '. inst/data/nlcd/nlcd_lndcov_2005_2025-07-22_curl_command.txt' had status 77 and error message 'Function not implemented'|
+get_nlcd_604c2e97f932045e|branch|45a3348a853ec1be|6357cc330f89601b|2c530c1562a7fbd1|-1300757729||t20291.646864567s|s72b|72|qs|local|vector|get_nlcd||0.069|running command '. inst/data/nlcd/nlcd_lndcov_2015_2025-07-22_curl_command.txt' had status 77 and error message 'Function not implemented'|
+get_nlcd|pattern|3c79690d64889659|6357cc330f89601b||1249175393||||288|qs|local|vector||get_nlcd_4d67c64802c83a84*get_nlcd_bf395c2f3280f395*get_nlcd_6acc6c7a545ac4be*get_nlcd_604c2e97f932045e|0.49||
+nutrient_locations|stem|82334b049b71fe80|02e33f1eb777a4ef|28117e229a368f18|-2064403038||t20291.646866072s|s564013b|564013|qs|local|vector|||0.07||
+southeast|stem|8ef9f038705f7ce6|a25310678f7adc77|2c530c1562a7fbd1|1551420958||t20291.646873876s|s375932b|375932|qs|local|vector|||7.119||
+southeast_grid|stem|b6b4806766b2ba51|65c6b2971967de5a|5aa52eb899c855fc|-1771098072|inst/figs/dot_grid.png|t20291.6476559734s|s20301096b|20301096|file|local|vector|||67.543||
