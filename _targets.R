@@ -28,17 +28,17 @@ library(exactextractr)
 library(amadeus)
 library(crew)
 library(crew.cluster)
-library(chopin)
-library(dataRetrieval)
 library(ggplot2)
 library(gt)
 library(webshot2)
 library(lubridate)
 library(tigris)
 library(jsonlite)
+library(curl)
 library(glue)
 library(sbtools)
 library(archive)
+library(foreign)
 sf::sf_use_s2(FALSE)
 terra::terraOptions(memfrac = 0.1)
 
@@ -92,7 +92,6 @@ controller_gpu <- crew.cluster::crew_controller_slurm(
 
 tar_option_set(
   packages = c(
-    "PrestoGP",
     "tibble",
     "sf",
     "terra",
@@ -107,23 +106,17 @@ tar_option_set(
     "fastDummies",
     "stringr",
     "amadeus",
-    "chopin",
     "scales",
     "ggridges",
-    "spatialsample",
     "broom",
-    "yardstick",
     "data.table",
     "gt",
     "webshot2",
     "ggplot2",
     "nhdplusTools",
     "exactextractr",
-    "dataRetrieval",
     "lubridate",
-    "chopin",
     "lubridate",
-    "psych",
     "crew",
     "crew.cluster",
     "tigris",
@@ -131,7 +124,9 @@ tar_option_set(
     "jsonlite",
     "glue",
     "sbtools",
-    "archive"
+    "archive",
+    "curl",
+    "foreign"
   ),
   format = "qs",
   controller = crew::crew_controller_group(
@@ -148,7 +143,6 @@ tar_option_set(
   retrieval = "worker",
   error = "continue"
 )
-
 
 # Run the R scripts in the R/ folder with your custom functions:
 tar_source("inst/targets/targets_data.R")
