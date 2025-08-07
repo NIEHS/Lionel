@@ -1,12 +1,23 @@
 name|type|data|command|depend|seed|path|time|size|bytes|format|repository|iteration|parent|children|seconds|warnings|error
+TADAProfile_file|stem|0dbf4f03a2e424b9|30487ce850e0a960|2c530c1562a7fbd1|268268513|inst/tabs/TADAProfile.csv|t20272.65831212s|s9000542b|9000542|file|local|vector|||5.534||
+TADAProfile|stem|17f48413d924a3b9|4129a9aaa258193e|c9993b3f61517723|1655269294||t20301.5282852082s|s502880b|502880|qs|local|vector|||0.539||
+nutrient_locations|stem|82334b049b71fe80|02e33f1eb777a4ef|28117e229a368f18|-2064403038||t20301.5282883859s|s564013b|564013|qs|local|vector|||0.1||
+southeast|stem|8ef9f038705f7ce6|a25310678f7adc77|2c530c1562a7fbd1|1551420958||t20301.5282892453s|s375932b|375932|qs|local|vector|||6.222||
+southeast_grid|stem|b6b4806766b2ba51|65c6b2971967de5a|5aa52eb899c855fc|-1771098072|inst/figs/dot_grid.png|t20301.5290733659s|s20301096b|20301096|file|local|vector|||67.72||
+process_nlcd|stem||8c71225e554fc05e|2c530c1562a7fbd1|-127421116||t20301.528281658s||0|qs|local|vector|||5.338||path does not exist.
+nlcd_years|stem|0e4c5b3dd91322d6|a44d46054600c001|2c530c1562a7fbd1|841804652||t20301.6097188721s|s88b|88|qs|local|list||nlcd_years_c57031b4c03f3543*nlcd_years_49802938573b3454*nlcd_years_d5ecf0bb33dfbcbe*nlcd_years_71d428f5b56cfa9f|5.578||
+get_nlcd_4d67c64802c83a84|branch||b55b5036907c9fde|2c530c1562a7fbd1|544756401||t20301.6097242715s||0|file|local|vector|get_nlcd||0.34|running command '. inst/data/nlcd/nlcd_lndcov_1985_2025-08-01_curl_command.txt' had status 77 and error message 'Function not implemented'. error 1 in extracting from zip file|invalid 'pattern' argument
+get_nlcd_bf395c2f3280f395|branch||b55b5036907c9fde|2c530c1562a7fbd1|-1105928186||t20301.6097250277s||0|file|local|vector|get_nlcd||0.068|running command '. inst/data/nlcd/nlcd_lndcov_1995_2025-08-01_curl_command.txt' had status 77 and error message 'Function not implemented'. error 1 in extracting from zip file|invalid 'pattern' argument
+get_nlcd_6acc6c7a545ac4be|branch||b55b5036907c9fde|2c530c1562a7fbd1|1614110431||t20301.6097258923s||0|file|local|vector|get_nlcd||0.067|running command '. inst/data/nlcd/nlcd_lndcov_2005_2025-08-01_curl_command.txt' had status 77 and error message 'Function not implemented'. error 1 in extracting from zip file|invalid 'pattern' argument
+get_nlcd_604c2e97f932045e|branch||b55b5036907c9fde|2c530c1562a7fbd1|-1300757729||t20301.6097267347s||0|file|local|vector|get_nlcd||0.066|running command '. inst/data/nlcd/nlcd_lndcov_2015_2025-08-01_curl_command.txt' had status 77 and error message 'Function not implemented'. error 1 in extracting from zip file|invalid 'pattern' argument
 scriptlines_targetdir|object|1bb3d2ba1c60f9f7
-controller_gpu|object|456690fcf7590ec1
+controller_gpu|object|e51fe878b6383e86
 cpus_per_task|object|73b794877cd9a999
 default_controller|object|44fe2d5e8bc2550e
 retry|function|0863d8224d0c242d
 scriptlines_basedir|object|d29e522512acb580
 map_locations|function|0129628a23cf1303
-.Random.seed|object|e5b3359f48bc2e9f
+.Random.seed|object|2ca8d1b7bf248e83
 scriptlines_container|object|4a8e071f976a7cd7
 my_R|function|ead1d70d19aaccf7
 scriptlines_apptainer|object|3c10e0bbd29dd6e1
@@ -18,14 +29,4 @@ barchart_nutrients_by_state|function|9c99b396213fece4
 pull_data_safely|function|0f06c7d9f20e459a
 get_nutrient_data|function|726ebb2a5424b157
 get_pesticide_data|function|b80816d76f966ece
-TADAProfile_file|stem|0dbf4f03a2e424b9|30487ce850e0a960|2c530c1562a7fbd1|268268513|inst/tabs/TADAProfile.csv|t20272.65831212s|s9000542b|9000542|file|local|vector|||5.431||
-nlcd_years|stem|0e4c5b3dd91322d6|a44d46054600c001|2c530c1562a7fbd1|841804652||t20291.6468585009s|s88b|88|qs|local|list||nlcd_years_c57031b4c03f3543*nlcd_years_49802938573b3454*nlcd_years_d5ecf0bb33dfbcbe*nlcd_years_71d428f5b56cfa9f|5.951||
-TADAProfile|stem|17f48413d924a3b9|4129a9aaa258193e|c9993b3f61517723|1655269294||t20291.6468620505s|s502880b|502880|qs|local|vector|||0.701||
-get_nlcd_bf395c2f3280f395|branch|45a3348a853ec1be|6357cc330f89601b|2c530c1562a7fbd1|-1105928186||t20291.6468627032s|s72b|72|qs|local|vector|get_nlcd||0.045|running command '. inst/data/nlcd/nlcd_lndcov_1995_2025-07-22_curl_command.txt' had status 77 and error message 'Function not implemented'|
-get_nlcd_4d67c64802c83a84|branch|45a3348a853ec1be|6357cc330f89601b|2c530c1562a7fbd1|544756401||t20291.6468635651s|s72b|72|qs|local|vector|get_nlcd||0.309|running command '. inst/data/nlcd/nlcd_lndcov_1985_2025-07-22_curl_command.txt' had status 77 and error message 'Function not implemented'|
-get_nlcd_6acc6c7a545ac4be|branch|45a3348a853ec1be|6357cc330f89601b|2c530c1562a7fbd1|1614110431||t20291.6468636648s|s72b|72|qs|local|vector|get_nlcd||0.067|running command '. inst/data/nlcd/nlcd_lndcov_2005_2025-07-22_curl_command.txt' had status 77 and error message 'Function not implemented'|
-get_nlcd_604c2e97f932045e|branch|45a3348a853ec1be|6357cc330f89601b|2c530c1562a7fbd1|-1300757729||t20291.646864567s|s72b|72|qs|local|vector|get_nlcd||0.069|running command '. inst/data/nlcd/nlcd_lndcov_2015_2025-07-22_curl_command.txt' had status 77 and error message 'Function not implemented'|
-get_nlcd|pattern|3c79690d64889659|6357cc330f89601b||1249175393||||288|qs|local|vector||get_nlcd_4d67c64802c83a84*get_nlcd_bf395c2f3280f395*get_nlcd_6acc6c7a545ac4be*get_nlcd_604c2e97f932045e|0.49||
-nutrient_locations|stem|82334b049b71fe80|02e33f1eb777a4ef|28117e229a368f18|-2064403038||t20291.646866072s|s564013b|564013|qs|local|vector|||0.07||
-southeast|stem|8ef9f038705f7ce6|a25310678f7adc77|2c530c1562a7fbd1|1551420958||t20291.646873876s|s375932b|375932|qs|local|vector|||7.119||
-southeast_grid|stem|b6b4806766b2ba51|65c6b2971967de5a|5aa52eb899c855fc|-1771098072|inst/figs/dot_grid.png|t20291.6476559734s|s20301096b|20301096|file|local|vector|||67.543||
+get_nlcd|stem|64209775a7acda75|b55b5036907c9fde|f3213e75bd081830|1249175393||||0|file|local|vector||get_nlcd_4d67c64802c83a84*get_nlcd_bf395c2f3280f395*get_nlcd_6acc6c7a545ac4be*get_nlcd_604c2e97f932045e|0.005||the condition has length > 1

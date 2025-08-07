@@ -120,27 +120,46 @@ targets_data <- list(
         download = TRUE,
         hash = TRUE
       )
+
+      chr_downloadtxt <- list.files(
+        download_dir,
+        pattern = nlcd_years,
+        full.names = TRUE
+      )
+      system(paste0(". ", chr_downloadtxt))
+
       TRUE
     },
-    pattern = map(nlcd_years),
+    format = "file"
   )
-  #   tar_target(
-  #     process_nlcd,
-  #     command = {
-  #       download_nlcd
-  #       amadeus::process_nlcd(
-  #         path = file.path(
-  #           "inst",
-  #           "data",
-  #           "nlcd"
-  #         ),
-  #         year = nlcd_years,
-  #         extent = terra::ext(-91.00001, -74.99999, 23.99999, 36.99999)
-  #       )
-  #       TRUE
-  #     },
-  #     pattern = map(nlcd_years)
-  #   ),
+  # tar_target(
+  #   download_nlcd,
+  #   command = {
+  #     chr_downloadtxt <- list.files(
+  #       "inst/data/nlcd/",
+  #       pattern = nlcd-years,
+  #        full.names = TRUE
+  #        )
+  #     system(paste0(". ", chr_downloadtxt))
+  #   },
+  #   pattern = map(nlcd_years)
+  # )
+  # tar_target(
+  #   process_nlcd,
+  #   command = {
+  #     download_nlcd
+  #     amadeus::process_nlcd(
+  #       path = file.path(
+  #         "inst",
+  #         "data",
+  #         "nlcd"
+  #       ),
+  #       year = 1985,
+  #       extent = terra::ext(-91.00001, -74.99999, 23.99999, 36.99999)
+  #     )
+  #     TRUE
+  #   }
+  # )
   #   tar_target(
   #     calculate_nlcd,
   #     command = {
